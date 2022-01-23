@@ -1,0 +1,143 @@
+/* MAIN TITLE */
+.main-title {
+    background-color: #2b354c;
+    height: 12em;
+    margin-bottom: 1.5em;
+}
+
+.main-title h1 {
+    font-family: 'Source Sans Pro', sans-serif;
+    color: white;
+    position: relative;
+    top: 2.5em;
+}
+
+
+
+div.container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.timeslot {
+    width: 18em;
+    margin: 0.5em;
+    padding: 0.5em;
+    border: #2b354c solid 0.2em;
+    text-align: center;
+    border-radius: 20px;
+}
+
+.timeslot h3 {
+    margin: 13px 0px;
+}
+
+.grow {
+    transition: all .1s ease-in-out;
+}
+
+.grow:hover {
+    transform: scale(1.1);
+}
+
+/* CALENDAR */
+.page-wrap {
+    padding: 20px 60px;
+}
+
+.breadcrumb {
+    margin: 25px 0;
+}
+
+.booked-date {
+    color: #b1b0b0;
+    cursor: not-allowed;
+}
+
+.unbooked-date {
+    cursor: pointer;
+}
+
+input.datepicker {
+    float: right;
+    height: 2em;
+    display: inline-block;
+    width: 15em;
+}
+
+.table-condensed {
+    width: 15em;
+}
+
+label {
+    color: black;
+}
+
+.input {
+    margin-bottom: 2em;
+}
+
+td.disabled-date {
+    color: #b1b0b0;
+    cursor: not-allowed;
+}
+
+td.today {
+    background-color: #d1e7dd;
+}
+
+
+
+/*TIMESLOTS*/
+.timeslot {
+
+}
+
+.unavailable {
+    background-color: #d2d2d2;
+    color: #b1b0b0;
+    border: none;
+    cursor: not-allowed;
+}
+
+.selected {
+    background-color: #d1e7dd;
+}
+
+
+
+#book {
+    background-color: #2b354c;
+    border-radius: 17px;
+    height: 3em;
+    width: 20%;
+    color: white !important;
+    font-family: 'Source Sans Pro', sans-serif;
+    margin-bottom: 3em;
+    margin-top: 1em;
+    font-size: 1.05em;
+}
+
+
+
+/* PROJECT CODE SELECTOR */
+div.chooseProjectCode {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+div.chooseProjectCode label {
+    margin-right: 0.5em;
+}
+
+div.chooseProjectCode select {
+    width: 10em;
+    height: 2em;
+}
+
+
+
+/* SUBHEADINGS */
+.subheading {
+    margin-bottom: 0.3em;
+}

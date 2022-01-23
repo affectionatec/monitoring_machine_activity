@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/DateTimeSelection.css}">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300&display=swap" rel="stylesheet">
+
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <header th:replace="fragments/HeaderForUser.html"></header>
+
+    <div class="main-title">
+        <div class="container">
+            <h1>Book Your Equipment</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2 class="subheading">Choose a date</h2>
+    </div>
+
+    <div class="input container">
+        <input class="datepicker">
+    </div>
+
+    <div class="container">
+        <h2 class="subheading">Choose a time slot</h2>
+    </div>
+
+    <div class="input container timeslots">
+        <div id="t1" class="timeslot unavailable">
+            <h3>8:00 - 8:30</h3>
+        </div>
+        <div id="t2" class="timeslot unavailable">
+            <h3>8:30 - 9:00</h3>
+        </div>
+        <div id="t3" class="timeslot unavailable">
+            <h3>9:00 - 9:30</h3>
+        </div>
+        <div id="t4" class="timeslot unavailable">
+            <h3>9:30 - 10:00</h3>
+        </div>
+        <div id="t5" class="timeslot unavailable">
+            <h3>10:00 - 10:30</h3>
+        </div>
+        <div id="t6" class="timeslot unavailable">
+            <h3>10:30 - 11:00</h3>
+        </div>
+        <div id="t7" class="timeslot unavailable">
+            <h3>11:00 - 11:30</h3>
+        </div>
+        <div id="t8" class="timeslot unavailable">
+            <h3>11:30 - 12:00</h3>
+        </div>
+        <div id="t9" class="timeslot unavailable">
+            <h3>12:00 - 12:30</h3>
+        </div>
+        <div id="t10" class="timeslot unavailable">
+            <h3>12:30 - 13:00</h3>
+        </div>
+        <div id="t11" class="timeslot unavailable">
+            <h3>13:00 - 13:30</h3>
+        </div>
+        <div id="t12" class="timeslot unavailable">
+            <h3>13:30 - 14:00</h3>
+        </div>
+        <div id="t13" class="timeslot unavailable">
+            <h3>14:00 - 14:30</h3>
+        </div>
+        <div id="t14" class="timeslot unavailable">
+            <h3>14:30 - 15:00</h3>
+        </div>
+        <div id="t15" class="timeslot unavailable">
+            <h3>15:00 - 15:30</h3>
+        </div>
+        <div id="t16" class="timeslot unavailable">
+            <h3>15:30 - 16:00</h3>
+        </div>
+        <div id="t17" class="timeslot unavailable">
+            <h3>16:00 - 16:30</h3>
+        </div>
+        <div id="t18" class="timeslot unavailable">
+            <h3>16:30 - 17:00</h3>
+        </div>
+        <div id="t19" class="timeslot unavailable">
+            <h3>17:00 - 17:30</h3>
+        </div>
+        <div id="t20" class="timeslot unavailable">
+            <h3>17:30 - 18:00</h3>
+        </div>
+    </div>
+    
+    <div class="container chooseProjectCode">
+        <label for="projectCodes">Choose a project code:</label>
+        <select name="projectCodes" id="projectCodes">
+            <option value="" selected>-</option>
+            <option th:each="code:${projectCodes}" th:value="${code}" th:text="${code}"></option>
+        </select>
+    </div>
+    
+    <div class="container">
+        <button id="book">Book Now</button>
+    </div>
+
+    <script th:inline="javascript">
+        let equipmentID = [[${equipmentID}]];
+        let username = [[${username}]];
+
+        let selectedDate = "";
+        let selectedTimes = [];
+
+        let projectCode = "";
+
+        // Get unavailable dates from backend
+        // key-value object with keys 0,1,2,...
+        let dates = [[${unavailableDates}]];
+        console.log(dates);
+        let bookedDates = [];
+        for (let date_index in dates) {
+            bookedDates.push(new Date(dates[date_index]));
+        }
+
+        let today = new Date();
+
+        function isPastDate(date) {
+            let todayDay = today.getDate();
+            let todayMonth = today.getMonth() + 1;  // January = 0
+            let todayYear = today.getFullYear();
+
+            let formattedDate = new Date(`${todayYear.toString()}-${todayMonth.toString()}-${todayDay.toString()}`)
+
+            if (date < formattedDate) {
+                return true;
+            }
+            return false;
+        }
+
+        function isBookedDate(date) {
+            return (bookedDates.findIndex(d => d.toDateString() === date.toDateString()) > -1); // see findIndex function
+        }
+
+        $(function() {  // when document ready
+            console.log($('.datepicker'));
+            $(".datepicker").datepicker({
+                autoclose: true,
+                datesDisabled: bookedDates,
+                daysOfWeekDisabled: [0,6],
+                todayHighlight: true,
+                startDate: today,
+                format: "dd/mm/yyyy",
+                beforeShowDay: (date) => {
+                    if (isBookedDate(date) || isPastDate(date)) {
+                        return 'booked-date';    // A String representing additional CSS classes to apply to the date’s cell
+                    }
+                    return 'unbooked-date';
+                }
+            });
+
+            $(".datepicker").on('change', e => {
+                selectedDate = $(e.currentTarget).val();
+
+                // clear styling on selected buttons
+                clearSelection();
+
+                // set selectedDate to selectedDate and clear selectedTimes list
+                resetSelectedDateTime(selectedDate.toString());
+
+                // Gets unavailable times given date and calls updateTimeSlots
+                getUnavailableTimes(equipmentID, selectedDate.toString());
+            });
+        });
+
+
+
+        function clearSelection() {
+            let selected = document.querySelectorAll(".selected");
+            for (let i=0; i<selected.length; i++) {
+                selected[i].classList.remove("selected");
+            }
+        }
+
+        function resetSelectedDateTime(selectedDate) {
+            selectedDate = selectedDate;
+            selectedTimes = [];
+        }
+
+        function getUnavailableTimes(equipmentID, date) {
+            let json = {"equipmentID": equipmentID, "date": date};
+            let json_string = JSON.stringify(json);
+
+            let xhr = new XMLHttpRequest();
+            xhr.open("POST", "/getUnavailableTimes", true);
+            xhr.setRequestHeader("Content-type", "application/json");
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        let response = xhr.response;
+                        let unavailableTimes = JSON.parse(response);
+                        updateTimeSlots(unavailableTimes);
+                    } else {
+                        console.error(xhr.statusText);
+                    }
+                }
+            }
+
+            xhr.send(json_string);
+        }
+
+        function updateTimeSlots(unavailableTimes) {
+            let disabled = document.querySelectorAll(".unavailable");
+
+            for (let i=0; i<disabled.length; i++) {
+                disabled[i].classList.remove("unavailable");
+                disabled[i].classList.add("grow");
+            }
+
+            for (let i in unavailableTimes) {       // index loop
+                let time = unavailableTimes[i];
+                let id = `#t${time}`;
+                document.querySelector(id).classList.add("unavailable");
+                document.querySelector(id).classList.remove("grow");
+            }
+        }
+
+
+
+        function toggleSelected(timeslotID) {
+            let element = document.querySelector(`#${timeslotID}`); // e.g. t3 to #t3
+
+            if (!element.classList.contains("unavailable")) {
+                if (element.classList.contains("selected")) {
+                    element.classList.remove("selected");
+                    let currentIndex = selectedTimes.findIndex((timeslot) => timeslot === timeslotID);      // find index of date in selectedDates
+                    selectedTimes.splice(currentIndex, 1);      // remove date from selectedDates
+                } else if (!element.classList.contains("selected")) {
+                    element.classList.add("selected");
+                    selectedTimes.push(timeslotID);
+                }
+            }
+        }
+
+        function updateSelectedTimes(e) {
+            // if inner h3 element is event target, then find nearest i.e. containing element with timeslot class and get its ID
+            let selectedTimeslotID = e.target.closest(".timeslot").getAttribute("id");
+            toggleSelected(selectedTimeslotID);
+        }
+
+        // Event listener on time slots to append
+        let timeslots = document.querySelectorAll(".timeslot");
+        for (let i=0; i<timeslots.length; i++) {
+            let timeslotID = timeslots[i].getAttribute("id");
+            timeslots[i].addEventListener("click", updateSelectedTimes);
+        }
+
+
+
+        let projectCodeSelector = document.querySelector("select");
+        projectCodeSelector.addEventListener("change", function() {
+            projectCode = projectCodeSelector.value;
+        });
+
+
+
+        function submit() {
+            let xhr = new XMLHttpRequest();
+            xhr.open("POST", "/makeBooking", true);
+            xhr.setRequestHeader("Content-type", "application/json");
+
+            let bookingInfo = {"equipmentID": equipmentID, "username": username, "date": selectedDate, "times": selectedTimes, "projectCode": projectCode};
+            let bookingInfoJSON = JSON.stringify(bookingInfo);
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 201) {
+                        alert("Booked!");
+                        window.location.href = "/";
+                    } else {
+                        console.error(xhr.statusText);
+                    }
+                }
+            }
+
+            xhr.send(bookingInfoJSON);
+        }
+
+        document.querySelector("button").addEventListener("click", submit);
+    </script>
+</body>
+</html>

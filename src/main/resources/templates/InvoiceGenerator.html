@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <link rel="stylesheet" th:href="@{/css/InvoiceGenerator.css}">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <header th:replace="fragments/Header.html"></header>
+
+        <div class="main-title">
+            <div class="container">
+                <h1>Generate An Invoice</h1>
+            </div>
+        </div>
+
+        <div class="container form">
+            <form action="/admin/generateInvoice" method="post">
+                <div class="selection">
+                    <h2>Username</h2>
+                    <select name="username" id="username">
+                        <option th:each="username:${usernames}" th:value="${username}" th:text="${username}"></option>
+                    </select>
+                </div>
+                <div class="selection">
+                    <h2>Month</h2>
+                    <select name="month" id="month">
+                        <option value=1>January</option>
+                        <option value=2>February</option>
+                        <option value=3>March</option>
+                        <option value=4>April</option>
+                        <option value=5>May</option>
+                        <option value=6>June</option>
+                        <option value=7>July</option>
+                        <option value=8>August</option>
+                        <option value=9>September</option>
+                        <option value=10>October</option>
+                        <option value=11>November</option>
+                        <option value=12>December</option>
+                    </select>
+                </div>
+                <div class="selection">
+                    <h2>Year</h2>
+                    <select name="year" id="year">
+                        <option th:each="year:${years}" th:value="${year}" th:text="${year}"></option>
+                    </select>
+                </div>
+                <button class="generate" type="submit">Generate Invoice</button>
+            </form>
+        </div>
+    </body>
+</html>

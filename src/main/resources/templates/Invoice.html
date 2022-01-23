@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/InvoiceGenerator.css}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300&display=swap" rel="stylesheet">
+</head>
+<body>
+<header th:replace="fragments/Header.html"></header>
+
+<div class="main-title">
+    <div class="container">
+        <h1>Monthly Invoice</h1>
+        <h3 id="summary"></h3>
+    </div>
+</div>
+
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Equipment</th>
+            <th scope="col">Time Slots Used</th>
+            <th scope="col">Charge Rate(£)</th>
+            <th scope="col">Total Charge(£)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="invoice:${invoices}">
+            <td th:text="${invoice.equipmentName}"></td>
+            <td th:text="${invoice.halfHours}"></td>
+            <td th:text="${invoice.chargeRate}"></td>
+            <td th:text="${invoice.totalCharge}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+<script th:inline="javascript">
+    let username = [[${username}]];
+    let monthNumber = [[${month}]];
+    let year = [[${year}]];
+
+    function monthNumberToName(monthNumber) {
+        let monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        let monthName = "";
+
+        return monthNames[monthNumber-1];
+    }
+
+    document.querySelector("#summary").innerHTML = `${username}, ${monthNumberToName(monthNumber)} ${year}`;
+</script>
+</html>

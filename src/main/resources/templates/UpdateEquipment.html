@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Equipment details</title>
+    <header th:replace="fragments/Header.html"></header>
+
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1>Equipments</h1>
+    <hr>
+    <h2>Update Equipments</h2>
+
+    <form action="#" th:action="@{/admin/saveEquipment}" th:object="${equipment}"
+          method="POST">
+
+        <!-- Add hidden form field to handle update -->
+        <input type="hidden" th:field="*{id}" />
+
+        <label>Name:</label>
+        <input type="text" th:field="*{name}" class="form-control mb-4 col-4">
+
+        <label>Inventory:</label>
+        <input type="text" th:field="*{inventory}" class="form-control mb-4 col-4">
+
+        <label>Charge Rate:</label>
+        <input type="text" th:field="*{charge_rate}" class="form-control mb-4 col-4">
+        <button type="submit" class="btn btn-info col-2"> Update Equipment</button>
+    </form>
+
+    <hr>
+
+    <a th:href = "@{/admin/equipment}"> Back to Equipments List</a>
+</div>
+</body>
+<footer th:replace="fragments/Footer.html"></footer>
+
+</html>

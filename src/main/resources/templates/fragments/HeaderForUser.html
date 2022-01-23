@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>User Header</title>
+    <script src="//unpkg.com/layui@2.6.8/dist/layui.js"></script>
+    <link rel="stylesheet" href="//unpkg.com/layui@2.6.8/dist/css/layui.css">
+</head>
+<body>
+
+<header th:fragment="HeaderForUser">
+
+    <nav class="navBar">
+        <ul class="layui-nav" lay-bar="disabled" lay-filter="" style="background-color: #2b354c;">
+            <li class="layui-nav-item "><img th:src="@{/img/ICS_official.jpg}" alt="Logo image for the portal" width="120px" height="60px"></li>
+            <li class="layui-nav-item"><a href="/">Home</a></li>
+            <li class="layui-nav-item"><a href="/equipmentBooking">Booking</a></li>
+            <li class="layui-nav-item"><a href="/all_consumables">Order Consumable</a></li>
+
+            <li class="hoverDropdown layui-nav-item">
+                <a href="javascript:;" th:inline="text">[[${#httpServletRequest.remoteUser}]]</a>
+                <!--            <h3 th:inline="text">Welcome [[${#httpServletRequest.remoteUser}]]</h3>-->
+                <dl class="layui-nav-child">
+                    <dd><a th:href="@{/modify_password/{username}(username=${#httpServletRequest.remoteUser})}">update password</a></dd>
+                    <dd><a href="">my details</a></dd>
+                    <dd>
+                        <a href="javascript: document.logoutForm.submit()" >logout</a>
+                        <form name="logoutForm" action="/log-out" method="post" th:hidden="true">
+                            <input hidden type="submit" value="logout" />
+                        </form>
+                    </dd>
+                </dl>
+            </li>
+
+            <!--        <li class="layui-nav-item" style="float: right;">-->
+            <!--            <form th:action="@{/logout}" method="post">-->
+            <!--                <button type="submit" class="layui-btn layui-btn-fluid" style="background-color: #2b354c; font-size: 22px;">Logout-->
+            <!--                </button>-->
+            <!--            </form></li>-->
+        </ul>
+    </nav>
+
+
+
+
+</header>
+
+
+</body>
+</html>

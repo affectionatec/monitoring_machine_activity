@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="base :: head(~{::title})">
+  <header th:replace="fragments/Header.html"></header>
+  <title>Service Reminder</title>
+</head>
+
+<body th:replace="base :: body(~{::h1}, ~{::section})">
+  <h1>Service Reminder</h1>
+
+  <section>
+    <div class="todoList">
+      <form class="form-horizontal" role="form" th:action="@{/update_services_reminder}" th:object="${items}" method="POST">
+        <table class="table table-bordered table-striped" id="todoItems">
+          <thead>
+            <tr>
+              <th>Equipment Name</th>
+              <th>Service</th>
+              <th>Complete</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="item,i : *{todoList}" th:class="${item.complete}? active : warning">
+              <input type="hidden" th:field="*{todoList[__${i.index}__].id}" />
+              <td th:text="${item.name}">Item_name</td><input type="hidden"
+                th:field="*{todoList[__${i.index}__].name}" />
+              <td th:text="${item.category}">item_category</td><input type="hidden"
+                th:field="*{todoList[__${i.index}__].category}" />
+              <td><input type="checkbox" th:checked="${item.complete} == true"
+                  th:field="*{todoList[__${i.index}__].complete}" /></td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- Update Button -->
+        <button type="submit" class="btn btn-primary">Mark as Completed</button>
+      </form>
+    </div>
+
+    <hr />
+
+    <!-- Item Input Form -->
+    <div class="todoForm">
+      <form class="form-horizontal" role="form" th:action="@{/add_services_reminder}" th:object="${newitem}" method="POST">
+        <div class="form-group">
+          <label for="inputItemName" class="col-sm-2">Equipment Name</label>
+          <div class="col-sm-10">
+            <input type="text" th:field="*{name}" class="form-control" id="inputItemName" placeholder="Enter Equipment Name" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="inputItemCategory" class="col-sm-2">Service</label>
+          <div class="col-sm-10">
+            <input type="text" th:field="*{category}" class="form-control" id="inputItemCategory"
+              placeholder="Enter Service" />
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Service</button>
+
+      </form>
+    </div>
+  </section>
+  <footer th:replace="fragments/Footer.html"></footer>
+</body>
+
+</html>

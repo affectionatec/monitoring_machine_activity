@@ -1,0 +1,12 @@
+.border
+{
+    border:thin black solid;
+    margin:30px;
+    padding:50px;
+}
+th {
+    text-align:center;
+    background-color: lightslategray;
+    color:black;
+}
+

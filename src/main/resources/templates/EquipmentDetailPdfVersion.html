@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.Thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Equipment Details Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+
+    <style type="text/css">
+        /*table.alternateRowsTable {*/
+        /*    border-color: #a9c6c9;*/
+        /*    min-width: 400px;*/
+        /*    border-collapse: collapse;*/
+        /*    font-family: verdana,arial,sans-serif;*/
+        /*    font-size: 0.9rem;*/
+        /*    color: #333333;*/
+        /*    border-width: 1px;*/
+        /*    margin-top: 10px;*/
+        /*}*/
+        .tableTitle {
+            text-align: center;
+        }
+        /*table.alternateRowsTable tr:hover {*/
+        /*    background-color: #ddd;*/
+        /*}*/
+        /*table.alternateRowsTable th {*/
+        /*    padding: 8px;*/
+        /*    border-style: solid;*/
+        /*    border-width: 1px;*/
+        /*    border-color: #a9c6c9;*/
+        /*}*/
+        /*table.alternateRowsTable td {*/
+        /*    padding: 8px;*/
+        /*    border-style: solid;*/
+        /*    border-width: 1px;*/
+        /*    border-color: #a9c6c9;*/
+        /*}*/
+        /*.oddRowColor {*/
+        /*    background-color: #d4e3e5;*/
+        /*}*/
+        /*.evenRowColor {*/
+        /*    background-color: #c3dde0;*/
+        /*}*/
+    </style>
+
+<!--    <script>-->
+<!--        // Automatic colour switch for each line.-->
+<!--        function alternateRows(id) {-->
+<!--            if(document.getElementsByTagName) {-->
+<!--                var table = document.getElementById(id);-->
+<!--                var rows = table.getElementsByTagName("tr");-->
+<!--                for(i = 0; i < rows.length; i++) {-->
+<!--                    if(i % 2 == 0) {-->
+<!--                        rows[i].className = "evenRowColor";-->
+<!--                    } else {-->
+<!--                        rows[i].className = "oddRowColor";-->
+<!--                    }-->
+<!--                }-->
+<!--            }-->
+<!--        }-->
+
+<!--        window.onload=function() {-->
+<!--            alternateRows('alternateColor');-->
+<!--        }-->
+<!--    </script>-->
+
+</head>
+<body>
+
+    <div class="container my-2">
+        <main>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th colspan="3" class="tableTitle"><h2>Equipment Details</h2></th>
+                    </tr>
+                    <tr>
+                        <th scope="col">Equipment ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Inventory</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="allEquipmentDetail:${allEquipmentDetails}">
+                        <td th:text="${allEquipmentDetail.id}"></td>
+                        <td th:text="${allEquipmentDetail.name}"></td>
+                        <td th:text="${allEquipmentDetail.inventory}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
+    </div>
+
+</body>
+
+</html>

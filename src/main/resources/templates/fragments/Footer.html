@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Footer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>-->
+
+    <style>
+        #container {
+            min-height: 100%;
+            height: auto !important;
+            height: 100%; /*IE6 do not recognize min-height*/
+            position: relative;
+        }
+
+        #footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 100px;
+            background: #2b354c;
+            clear: both;
+        }
+    </style>
+</head>
+<body>
+
+
+
+<footer th:fragment="footer">
+
+    <div class="footer" id="container">
+        <div id="footer" align="center">
+            <p style="color: #d2d2d2">©Copyright</p>
+            <a href="#" style="color: #d2d2d2">contact us</a></li>
+            <div>
+                <a href="https://www.facebook.com" aria-label="facebook"><i class="fa fa-facebook" style="color: #d2d2d2"></i></a>
+                <a href="https://www.instagram.com/instagram/" aria-label="instagram"><i class="fa fa-instagram"
+                                                                  style="color: #d2d2d2"></i></a>
+                <a href="www.twitter.com" aria-label="twitter"><i class="fa fa-twitter" style="color: #d2d2d2"></i></a>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function(){
+        autoFooterHeight();
+    })
+
+    //this method is to tackle content covered by footer problem
+    function autoFooterHeight(){
+        //get the body height
+        var bodyHeight = $("body").height();
+        //get the footer height
+        var footerHeight = $(".footer").height();
+        //get the screen height
+        var iHeight = document.documentElement.clientHeight || document.body.clientHeight;
+        //if the content height bigger than screen height subtraction footer height, then remove the fixed style.
+        if(bodyHeight > (iHeight - footerHeight)){
+            $("#footer").css('position','absolute');
+        }
+
+    }
+
+
+
+</script>
+
+</body>
+</html>

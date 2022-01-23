@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>EquipmentOperationPage</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+          integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <!-- jquery -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+
+    <!-- bootstrap - icons  -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <!-- date selector -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/calender_custom.css}" />
+    <script type="text/javascript" th:src="@{/js/calender_custom.js}"></script>
+    <script type="text/javascript" th:src="@{/js/OperationCheck.js}"></script>
+    <script type="text/javascript" th:src="@{/js/qrcode.js}"></script>
+    <style>
+        .spInboxWrapper{
+            margin-left: 2em;
+            margin-right: 2em;
+        }
+    </style>
+
+</head>
+
+
+<body>
+<header th:replace="fragments/Header.html"></header>
+<div class="container" style="padding: 0 0 10rem 0">
+    <!-- page label -->
+    <div class="page-label">Operation Check</div>
+    <!-- dynamic form -->
+    <div class="form-container">
+        <!-- <p> There is no data here, please <a href=" " onclick="callModal()">add a new data</a > at
+            least.</p > -->
+        <div class="form-ele-container">
+            <label for="date">Time: </label>
+            <input type="text" id="input_date_single" name="date" /><span id="date_span"
+                                                                          class="alert-span"></span><br />
+            <label for="name">Machine Name: </label>
+            <input name="name" type="text" /><span id="name_span" class="alert-span"></span><br />
+            <div class="options-container">
+
+            </div>
+            <button class="add-option-button btn btn-primary" onclick="callModal()">Add Option</button>
+        </div>
+        <button id="button-reset" class="btn btn-danger" onclick="resetAll()">Reset</button>
+        <button id="button-submit" class="btn btn-primary" onclick="submitNewData()">Submit</button>
+    </div>
+    <div class="new-button-container">
+
+    </div>
+    <div class="estimate-container">
+        <div class="date-range">
+            <label for="dateRange">Date range: </label><input type="text" id="input_date_range_start">
+            <span>to</span>
+            <input type="text" id="input_date_range_end">
+            <input type="button" value="Date Range" id="input_date_range_start_end">
+            <button class="btn btn-primary" onclick="submitDateRange()">Select</button>
+        </div>
+        <!-- dynamic table -->
+        <div class="table-container">
+
+        </div>
+    </div>
+
+    <div class="log-table-container">
+        <div class="label-maintainence">
+            <span style="font-size: 1rem;font-weight: 500;">Maintenance Logs</span>
+        </div>
+
+    </div>
+    <div class="report-container">
+        <button class="btn btn-primary"><a href="/admin/equipmentOperationReport" style="color: azure">Generate report</a></button>
+    </div>
+
+</div>
+
+<div class="modal fade" id="newFormElementPanel" tabindex="-1" aria-labelledby="newModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newModalLabel">Add a new data</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="option-edit-panel">
+                    <!-- <label for="optionName">Option Name:</label>
+                    <input type="text" name="optionName" /><br />
+                    <label for="standardType">Standard Type:</label>
+                    <input type="radio" name='standardType' value="0" />Equal
+                    <input type="radio" name='standardType' value="1" />Scope
+                    <br />
+                    <div class="standard-value-container">
+                    </div> -->
+                    <!-- <label class="equal-type" for="equalType">Standard Value:</label>
+                    <input class="equal-type" type="text" />
+                    <label class="scope-type" for="scopeType">Standard Value:</label>
+                    <input class="scope-type" type="text" /><span class="scope-type"> ~ </span><input
+                        class="scope-type" type="text" /> -->
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="addNewOption()">Save</button> -->
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- Modal - delete confirm -->
+<div class="modal fade" id="deleteElementPanel" tabindex="-1" aria-labelledby="newModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newModalLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="delete-alert">
+                    Are you sure to delete this option?
+                </div>
+            </div>
+            <div class="modal-footer">
+                <!--                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
+                <!--                <button type="button" class="btn btn-primary delete-button">Confirm</button>-->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+<!-- jquery, bootstrap, echarts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.1.2/dist/echarts.min.js"></script>
+
+
+<script>
+    // ----------------------element adding methods----------------------------
+    // clear form data
+    let resetAll = () => {
+
+        $('#input_date_single').val(null);
+        $(":input[name='name']").val(null);
+
+        let optionSel = $('input[name="optionSel"]:checked');
+        optionSel.each((index, ele) => {
+            $(ele).prop('checked', false)
+            console.log(index, $(ele).val(), $(`input[name="${$(ele).val()}"]`).attr('type'));
+
+        })
+        let inputOptions = $(".options-container").children();
+        if (inputOptions && inputOptions.length > 0) {
+            $(".options-container").children().map((index, ele) => {
+                $(ele).children().map((index, ele) => {
+
+                    if ($(ele).is("input")) {
+
+                        switch ($(ele).attr("type")) {
+                            case "text":
+                                console.log("this is a text input");
+                                console.log($(ele).val())
+                                $(ele).val(null);
+                                break;
+                            case "radio":
+                                console.log("this is a radio input");
+                                console.log($(ele)[0].checked)
+                                $(ele)[0].checked = false;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                })
+            })
+        }
+        $(".input-error-tips").remove();
+    }
+    // format form data
+    // new ------
+    let formatForm = () => {
+        let optionSel = $('input[name="optionSel"]:checked');
+        let data = {
+            date: '',
+            name: '',
+            operateData: []
+        }
+
+        optionSel.each((index, ele) => {
+            if ($(`input[name="${$(ele).val()}"]`).attr('type') == 'radio') {
+                // data[`${$(ele).val()}`] = $(`input:radio[name='${$(ele).val()}']:checked`).val();
+                let obj = {};
+                obj[`${$(ele).val()}`] = $(`input:radio[name='${$(ele).val()}']:checked`).val();
+                data.operateData.push(obj);
+            } else {
+                // data[`${$(ele).val()}`] = $(`input[name='${$(ele).val()}']`).val();
+                let obj = {};
+                obj[`${$(ele).val()}`] = $(`input[name='${$(ele).val()}']`).val();
+                data.operateData.push(obj);
+            }
+        })
+        let checkEmpty = 1;
+        $(".input-error-tips").remove();
+        data.date = $('#input_date_single').val();
+        data.name = $(":input[name='name']").val();
+        if (data.date == "" || !data.date) {
+            $('#input_date_single').after(`
+                            <span class="input-error-tips" style="margin: 1rem; color: red">Date should not be empty.</span>
+                            `);
+            checkEmpty = 0;
+        }
+        if (data.name == "" || !data.name) {
+            $(":input[name='name']").after(`
+                            <span class="input-error-tips" style="margin: 1rem; color: red">Name should not be empty.</span>
+                            `);
+            checkEmpty = 0;
+        }
+        if (data.operateData && data.operateData.length < 1) {
+            checkEmpty = 0;
+            alert("Please select 1 option at least.")
+        } else if (data.operateData && data.operateData.length > 0) {
+            data.operateData.map((ele, index) => {
+                $.each(ele, (key, value) => {
+                    if (!value || value == "") {
+                        checkEmpty = 0;
+                        $(`input[name="${key}"]`).nextAll()[$(`input[name="${key}"]`).nextAll().length - 1].remove();
+                        $(`input[name="${key}"]`).parent().append(`
+                            <span class="input-error-tips" style="margin: 1rem; color: red">${key} should not be empty.</span><br/>
+                            `)
+                    }
+                })
+            })
+        }
+        let formatRes = {
+            data: data,
+            checkEmpty: checkEmpty
+        }
+        return formatRes;
+    }
+
+    // submit user input data
+    let submitNewData = () => {
+        let formatRes = formatForm();
+        if (!formatRes.checkEmpty) { return; }
+        console.log(formatRes.data)
+        $.ajax({
+            url: "/postOperateData",
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(formatRes.data),
+            success: (res) => {
+
+                res=JSON.parse(res)
+                console.log(res)
+                if (res.status=="ok"){
+                    clearTable();
+                    loadTable(res);
+                }else alert("input data fail")
+
+            },
+            error: (er) => {
+                console.log('fail.')
+            }
+        })
+    }
+    // get date range
+    let getDateRange = () => {
+        let dateRangeList = [$('#input_date_range_start').val(), $('#input_date_range_end').val()];
+        return dateRangeList;
+    }
+
+    // submit date range
+    let submitDateRange = () => {
+        let data;
+        if(getDateRange().length < 2){
+            data = {"data":null};
+        } else {
+            data = {"data":getDateRange()};
+        }
+
+        $.ajax({
+            url: '/postOperateDataRange', //path
+            type: 'POST', //request method
+            contentType: 'application/json',
+            data: JSON.stringify(data), //Parameters (JSON format)
+            success: (res) => {
+                res=JSON.parse(res)
+                console.log(res)
+                clearTable();
+                loadTable(res);
+            },
+            error: (er) => {
+                console.log('fail.')
+                clearTable();
+            }
+        })
+    }
+    // format json data
+    let getDateList = (res) => {
+        let dateList = res.dateList;
+        return dateList;
+    }
+    let getDataListPre = (res) => {
+        let dataList = res.dataList;
+        return dataList;
+    }
+    let transDailyValue = (obj) => {
+        let valueObj = obj;
+        let valueArr = [];
+
+        $.each(valueObj, (index, ele) => {
+            if (index != 'date' && index != 'equipmentName') {
+                valueArr.push({
+                    name: index,
+                    value: ele
+                })
+            }
+        })
+        let conditionObj = {
+            date: valueObj['date'],
+            value: valueArr
+        }
+        return conditionObj;
+    }
+
+    let formatResData = (res) => {
+        let dataListPre = getDataListPre(res);
+        let dateList = getDateList(res);
+        let dataList = [];
+
+        if (dataListPre && dataListPre.length > 0) {
+            dataListPre.map((elePre, indexPre) => {
+                if (indexPre > 0) {
+                    let flag = 0;
+                    dataList.map((ele, index) => {
+                        if (ele.name == elePre['equipmentName']) {
+                            flag = 1;
+                        }
+                    })
+                    if (flag == 0) {
+                        dataList.push({
+                            name: elePre['equipmentName'],
+                            machineConditions: []
+                        })
+                    }
+                } else {
+                    dataList.push({
+                        name: elePre['equipmentName'],
+                        machineConditions: []
+                    })
+                }
+            })
+        }
+
+        dataList.map((ele, index)=>{
+            dataList[index].machineConditions = generateDailyArr(dateList);
+        })
+
+        dataList.map((ele, index)=>{
+            dataListPre.map((elePre, indexPre)=>{
+                if(ele.name == elePre.equipmentName){
+                    console.log(dataList[index].machineConditions)
+                    dataList[index].machineConditions.map((conEle, conIndex)=>{
+                        if(conEle.date == elePre.date){
+                            dataList[index].machineConditions[conIndex] = transDailyValue(elePre);
+                        }
+                    })
+                }
+            })
+        })
+        console.log(dataList)
+        return dataList;
+    }
+
+    let generateDailyArr = (dateList)=>{
+        let dailyArr = [];
+        dateList.map((ele, index)=>{
+            dailyArr.push({
+                date:ele,
+                value:[]
+            })
+        })
+        return dailyArr;
+    }
+
+    // ----------------------table loading methods----------------------------------
+    // load table head according to the specific date
+    let loadTableHead = (dateList) => {
+        let tableHead = ``;
+        if (dateList && dateList.length > 0) {
+            dateList.map((ele, index) => {
+                tableHead = tableHead + `<td>${ele}</td>`;
+            })
+        } else console.log('error, there is no data on selected period. ');
+
+        tableHead = `<thead>
+            <tr>
+            <td>Equipment</td>
+            ${tableHead}
+            </tr>
+            </thead>`
+        return tableHead;
+    }
+
+    /* Condestimation method
+    *  parameters
+    *  standard = [{
+    *     'value': int/string/[int x, int y],
+    *     'mod': 0, 1, 2 (0: equal, 1: no large than, 2: no small than, 3: in the range x ~ y)
+    *  }]
+    *  data = [int/string]
+    */
+    let estimate = (standard, data) => {
+        console.log(data, standard)
+        let flag = 1;
+        let tipStr = ``;
+        if (data && data.length > 0) {
+            if (standard && (standard.length > 0)) {
+                let tips = [];
+                // new method ---
+                data.map((ele, index) => {
+                    let problem = '';
+
+                    standard.map((eleS, indexS) => {
+                        if(eleS.name == 'engineStartTime'){
+                        }
+                        if (eleS.name == ele.name) {
+                            // console.log(eleS.name, ele.name, eleS.value, ele.value);
+
+                            switch (eleS.mode) {
+                                case '0':
+                                    if (eleS.value == ele.value) {
+                                        tips.push(ele.name + ': pass');
+                                    } else {
+                                        flag = 0;
+                                        tips.push(`${ele.name}: fail, ${ele.value} fail to sufficient ${eleS.value}`);
+                                    }
+                                    break;
+                                case '1':
+                                    if ((parseInt(JSON.parse(eleS.value)[0]) < parseInt(ele.value)) && (parseInt(JSON.parse(eleS.value)[1]) > parseInt(ele.value))) {
+                                        tips.push(ele.name + ': pass');
+                                    } else {
+                                        flag = 0;
+                                        if (parseInt(JSON.parse(eleS.value)[0]) >= parseInt(ele.value)) {
+                                            tips.push(`${ele.name}: fail, ${ele.value} small than ${JSON.parse(eleS.value)[0]}`);
+                                        } else if (parseInt(JSON.parse(eleS.value)[1]) <= parseInt(ele.value)) {
+                                            tips.push(`${ele.name}: fail, ${ele.value} large than ${JSON.parse(eleS.value)[1]}`);
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    })
+                })
+                if (tips.length > 0) {
+                    tips.map((ele, index) => {
+                        tipStr = tipStr + ele + ';</br>';
+                    })
+                }
+            } else console.log('error, please supply the standard for every data norm. ');
+        } else console.log('error, there is no data to estimate. ');
+        let result = {
+            'flag': flag,
+            'tips': tipStr
+        }
+        return result;
+    }
+
+    // load table content
+    let loadTableContent = (dataList, standardList) => {
+        let tableBody = ``;
+        let standard = standardList;
+        let list = dataList ? dataList : [];
+        if (list && list.length > 0) {
+            list.map((ele, index) => {
+                let conditions = ele.machineConditions;
+                if (conditions && conditions.length > 0) {
+                    let tr = `<td>${ele.name}</td>`;
+                    conditions.map((eleDaily, indexDaily) => {
+                        let dailyValue = eleDaily.value;
+                        if (dailyValue && dailyValue.length > 0) {
+                            let result = estimate(standard, dailyValue);
+
+                            tr = tr + `
+                            <td data-toggle="tooltip" data-html="true" title="${result.tips}"> ${result.flag ? '<i class="bi bi-check-circle-fill"></i>' : '<i class="bi bi-x-circle-fill"></i>'} </td>
+                            `;
+
+                        } else {
+                            tr = tr + `
+                            <td class="empty-element" data-toggle="tooltip" title="There is no data today."></td>
+                            `;
+                        }
+                    })
+                    tr = `<tr>${tr}</tr>`;
+                    tableBody = tableBody + tr;
+                }
+            })
+        }
+        tableBody = `<tbody>${tableBody}</tbody>`;
+        return tableBody;
+    };
+
+    // new data format function
+    let getEqList = (dataList) => {
+        let eqList = [];
+        dataList.map(dataEle => {
+            if (eqList.indexOf(dataEle.equipmentName) == -1) {
+                eqList.push(dataEle.equipmentName);
+            }
+        })
+        return eqList;
+    }
+
+    let transDataVertical = (dataList, dateList) => {
+        let eqList = getEqList(dataList);
+        dataList.map(dataEle => {
+            if (eqList.indexOf(dataEle.equipmentName) == -1) {
+                eqList.push(dataEle.equipmentName);
+            }
+        })
+        let fixedDataList = [];
+        dateList.map((dateEle, dateIdx) => {
+            fixedDataList.push({ "name": dateEle, "machineConditions": [] });
+            // console.log(dateIdx, dataEle);
+            eqList.map((eqEle, eqIdx) => {
+                let eqEleData = {
+                    date: eqEle,
+                    value: []
+                }
+                dataList.find((value) => {
+                    if (value.equipmentName == eqEle && value.date == dateEle) {
+                        $.each(value, (key, val) => {
+                            let obj = {};
+                            if (key != "equipmentName" && key != "date") {
+                                obj["name"] = key;
+                                obj["value"] = val;
+                                eqEleData.value.push(obj);
+                            }
+                        });
+                    }
+                })
+                fixedDataList[dateIdx].machineConditions.push(eqEleData);
+            })
+
+        })
+        console.log(fixedDataList)
+        return fixedDataList;
+    }
+
+    let loadTable = (res) => {
+        let tableDocPre = `<table class="condition-table table table-bordered table-striped"></table>`;
+        // init a table.
+        $(".table-container").append(tableDocPre);
+        //load table head.
+        // $(".condition-table").append(loadTableHead(getDateList(res)));
+        $(".condition-table").append(loadTableHead(getEqList(res.dataList)));
+        //load table body.
+        // $(".condition-table").append(loadTableContent(formatResData(res), res.standardList));
+        $(".condition-table").append(loadTableContent(transDataVertical(res.dataList, res.dateList), res.standardList));
+        // load tips.
+        $('[data-toggle="tooltip"]').tooltip();
+        // save res into localStorage
+        localStorage.setItem('checkTableRes', JSON.stringify(res));
+    }
+    let clearTable = () => {
+        $(".table-container").html('');
+    }
+    $(function () {
+        submitDateRange();
+        loadMaintainTable(resMaintain);
+
+    })
+
+
+</script>
+<!-- load date selector -->
+<script type="text/javascript">
+    function setRange(startId, endId, start, end) {
+        $(startId).val(start.year + '-' + $.addZero(start.month + 1) + '-' + $.addZero(start.day));
+        $(endId).val(end.year + '-' + $.addZero(end.month + 1) + '-' + $.addZero(end.day));
+    }
+
+    $(document).ready(function () {
+        $.fn.calendar({ target: "#input_date_single", lang: 'en' });
+
+        $.fn.calendar({ target: "#input_date_multi", lang: 'en', mode: 'multi' });
+
+        $.fn.calendar({ target: "#input_date_range", lang: 'en', mode: 'range', recordState: true });
+        let today = new Date();
+        $.fn.calendar({
+            target: "#input_date_range_start_end",
+            mode: 'range',
+            ok: function (checked, target) {
+                setRange("#input_date_range_start", "#input_date_range_end", checked[0], checked[1]);
+                return true;
+            },
+            lang: 'en'
+        });
+
+        $.fn.calendar({ target: "#input_date_2calendar", lang: 'en', mode: 'range', num: 2});
+
+        $.fn.calendar({ target: "#input_date_blur", mode: 'single'});
+    });
+
+
+    //-------------- load maintainence log table -----------------------
+    let loadMaintainTable = (resData) => {
+        let data = resData.dataList;
+        console.log(data);
+        let tableBodyStr = ``;
+        let tableStr = `
+            <table class="table log-table table-striped">
+                <thead>
+                    <tr>
+                        <td>Equipment name</td>
+                        <td>Start time</td>
+                        <td>End time</td>
+                        <td>Description</td>
+                    </tr>
+                </thead>
+            </table>
+        `;
+        if (data && data.length > 0) {
+            console.log(">>>>", data)
+            data.map((ele, index) => {
+                tableBodyStr = tableBodyStr + `
+                <tr>
+                  <td>${ele.equipmentName}</td>
+                  <td>${ele.startTime}</td>
+                  <td>${ele.endTime}</td>
+                  <td>${ele.tips}</td>
+                </tr>
+                `;
+            })
+        }
+        tableBodyStr = `
+            <tbody>${tableBodyStr}</tbody>
+        `;
+        $(".log-table-container").append(tableStr);
+        $(".log-table").append(tableBodyStr);
+    }
+
+
+    let resMaintain = {
+        dataList:[{equipmentName:'pump', startTime:'2021-08-11', endTime:'2021-08-12', tips:'pump has been successfully fixed'}, {equipmentName:'engine', startTime:'2021-08-12', endTime:'2021-08-15', tips:'the engine has been replaced'}, {equipmentName:'fan', startTime:'2021-08-09', endTime:'2021-08-09', tips:'the fan has been fixed'}, {equipmentName:'temperature', startTime:'2021-08-14', endTime:'2021-08-15', tips:'the temperature has been replaced'}]
+    }
+
+    let copyTable = () => {
+
+        window.open(`/admin/EquipmentOperationReport`) // report URL
+    }
+
+</script>
+<style scoped>
+    body {
+        background-color: #e0e0e9;
+    }
+
+    .page-label {
+        background-color: #fff;
+        margin: 0 0 0 2rem;
+        padding: 2rem 0 1rem 2rem;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .form-container {
+        background-color: #fff;
+        margin: 0 0 0 2rem;
+        padding: 2rem 0 2rem 2rem;
+    }
+
+    .form-container .input-temperature {
+        width: 3rem;
+    }
+
+    .form-container .form-ele-container {
+        margin: 0 0 1rem 0;
+    }
+
+    .form-container .form-ele-container label {
+        width: 8.5rem;
+    }
+
+    .form-container .form-ele-container input {
+        margin: 0 0.5rem 0 0;
+    }
+
+    .form-container button {
+        margin: 0 1rem 0 0;
+    }
+
+    .new-button-container {
+        margin: 0 0 0 5rem;
+        color: blue;
+    }
+
+    .estimate-container {
+        background-color: #fff;
+        margin: 0 0 0 2rem;
+        padding: 2rem;
+    }
+
+    .date-range {
+        margin: 0 0 1rem 0;
+    }
+
+    .date-range>input {
+        margin: 0 0 0 1rem;
+    }
+
+    .date-range>button {
+        margin: 0 0 0 2rem;
+    }
+
+    .table-container {
+        margin: 0;
+    }
+
+    .table-container .bi-check-circle-fill {
+        color: #28a745;
+    }
+
+    .table-container .bi-x-circle-fill {
+        color: #dc3545;
+    }
+
+    .table-container .empty-element {
+        background-color: #6c757d;
+    }
+
+    .log-table-container {
+        background-color: #fff;
+        margin: 1rem 0 0 2rem;
+        padding: 2rem;
+    }
+
+    .log-table-container>.label-maintainence {
+        margin: 0 0 1rem 0;
+    }
+    .tooltip-inner {
+        max-width: 20rem!important;
+        text-align: left!important;
+    }
+    .report-container{
+        /*margin: 0 0 1rem 0;*/
+        background-color: #fff;
+        margin: 0 0 0 2rem;
+        padding: 2rem;
+    }
+</style>
+<footer th:replace="fragments/Footer.html"></footer>
+
+
+</html>

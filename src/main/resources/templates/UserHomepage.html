@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>HomePage</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- the plug-in responsible for table sorting, searching and pagination -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.css">
+
+<!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>-->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+    <script type="text/javascript" charset="utf8"
+            src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.1.2/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+
+
+    <style>
+        .spInboxWrapper {
+            margin-left: 2em;
+            margin-right: 2em;
+        }
+    </style>
+    <header th:replace="fragments/HeaderForUser.html"></header>
+</head>
+
+<body>
+
+<div class="container my-2">
+
+    <div>
+        <h3 th:inline="text" align="left">Welcome [[${#httpServletRequest.remoteUser}]]</h3>
+    </div>
+    <div>Cleanroom environmental conditions</div>
+
+    <div class="table-container-bg">
+        <div class="status-table-container">
+            <table class="table status-table table-bordered">
+                <thead>
+                <tr>
+<!--                     Give Temperature echart's div to the data-bs-content-->
+                    <th>
+                        <div id="temp1" data-bs-container="body" data-bs-placement="bottom"
+                             data-bs-toggle="popover" data-bs-html="true"
+                             data-bs-content="<div class='temperature-charts' id='temperatureCharts'>charts</div>">
+                                    <span class="label-span">
+                                        Temperature:
+                                    </span>
+                            <span class="value-span">
+                                        23
+                                    </span>
+                            <span class="label-span">
+                                        ℃
+                                    </span>
+                        </div>
+                    </th>
+<!--                     Give Humidity echart's div to the data-bs-content-->
+                    <th>
+                        <div id="humi1" data-bs-container="body" data-bs-placement="bottom"
+                             data-bs-toggle="popover" data-bs-html="true"
+                             data-bs-content="<div class='temperature-charts' id='humidityCharts'>charts</div>">
+                                    <span>
+                                        Humidity:
+                                    </span>
+                            <span class="value-span">
+                                        20
+                                    </span>
+                            <span class="label-span">
+                                        %
+                                    </span>
+                        </div>
+                    </th>
+<!--                    Give Pressure echart's div to the data-bs-content-->
+                    <th>
+                        <div id="prss1" data-bs-container="body" data-bs-placement="bottom"
+                             data-bs-toggle="popover" data-bs-html="true"
+                             data-bs-content="<div class='temperature-charts' id='pressureCharts'>charts</div>">
+                                    <span class="label-span">
+                                        Pressure:
+                                    </span>
+                            <span class="value-span">
+                                        1.5
+                                    </span>
+                            <span class="label-span">
+                                        kPa
+                                    </span>
+                        </div>
+                    </th>
+                    <th>
+                                <span class="label-span">
+                                    Status:
+                                </span>
+                        <span class="value-span">
+                                    Normal
+                                </span>
+                    </th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+        <div class="main-table-container">
+            <table class="table ">
+                <thead>
+                <tr>
+                    <th></th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+    <div class="spInboxWrapper">
+        <table class="sortable table table-striped" id="SP-inbox-table">
+            <thead>
+            <tr>
+                <th scope="col">Equipment Name</th>
+                <th scope="col">User Name</th>
+                <th scope="col">Booked date</th>
+                <th scope="col">Booking time</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="usingRecord:${usingRecords}">
+                <td class="record" id="equipmentName" th:text="${usingRecord.equipmentName}"></td>
+                <td class="record" id="userName" th:text="${usingRecord.userName}"></td>
+                <td class="record" id="date" th:text="${usingRecord.bookedDate}"></td>
+                <td class="record" id="time" th:text="${usingRecord.time}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <button id="ubtn" type="button" class="btn btn-primary" onclick="PdfPrintDiv()">PrintPDF</button>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    function PdfPrintDiv() {
+        //hide the part that should not be printed
+        document.getElementById("ubtn").style.display = "none";
+        //implement print
+        bdhtml = window.document.body.innerHTML;
+        sprnstr = "<!--startprint-->";
+        eprnstr = "<!--endprint-->";
+        prnhtml = bdhtml.substr(bdhtml.indexOf(sprnstr) + 17);
+        prnhtml = prnhtml.substring(0, prnhtml.indexOf(eprnstr));
+        window.document.body.innerhtml = prnhtml;
+        window.print();
+        //showing the hidden part after printing
+        document.getElementById("ubtn").style.display = "block";
+    }
+
+
+    //this is pagination and sorting table
+    $(document).ready(function () {
+        $('#SP-inbox-table').DataTable({
+            "lengthMenu": [5, 10, 15, 20, 22]
+        });
+    });
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous"></script>
+
+</body>
+<script type="text/javascript">
+    let loadCart = (type) => {
+        let titleText = '';
+        let legendText = '';
+        let seriesText = '';
+        let formatterText = '';
+        let dataList = [];
+        switch (type) {
+            case 'temperatureCharts':
+                titleText = 'The Temperature Trend';
+                legendText = 'Temperature';
+                seriesText = 'Temperature';
+                formatterText = '{value} °C';
+                dataList = [10, 11, 13, 11, 12, 12, 9, 40, 50];
+                break;
+            case 'humidityCharts':
+                titleText = 'The Humidity Trend';
+                legendText = 'Humidity';
+                seriesText = 'Humidity';
+                formatterText = '{value} %';
+                dataList = [40, 51, 33, 51, 62, 72, 10, 20, 50];
+                break;
+            case 'pressureCharts':
+                titleText = 'The Pressure Trend';
+                legendText = 'Pressure';
+                seriesText = 'Pressure';
+                formatterText = '{value} kPa';
+                dataList = [10, 1, 5, 7, 8, 9, 2, 4, 1];
+                break;
+            default:
+                break;
+        }
+        let chartDom = document.getElementById(type);
+        console.log(chartDom);
+        let myChart = echarts.init(chartDom);
+        let option;
+        let time = new Date();
+        let currentHour = time.getHours();
+        console.log('>>>', currentHour)
+        let hourList = [currentHour];
+        let timeEle = currentHour;
+        for (i = 0; i < 7; i++) {
+            timeEle = timeEle - 3;
+            if (timeEle > 0) {
+                hourList.push(timeEle)
+            } else {
+                hourList.push(timeEle + 24)
+            }
+        }
+        let hourListReverse = hourList.reverse();
+        option = {
+            title: {
+                text: titleText,
+                subtext: ''
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data: [legendText]
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: hourListReverse
+            },
+            yAxis: {
+                type: 'value',
+                axisLabel: {
+                    formatter: formatterText
+                }
+            },
+            series: [
+                {
+                    name: seriesText,
+                    type: 'line',
+                    data: dataList,
+                    markPoint: {
+                        data: [
+                            { type: 'max', name: 'The Max' },
+                            { type: 'min', name: 'The Min' }
+                        ]
+                    },
+                },
+            ]
+        };
+        option && myChart.setOption(option);
+    }
+    // on load page
+    $(function () {
+
+        $('#temp1').hover(() => {
+            let exampleEl = document.getElementById('temp1')
+            let popover = new bootstrap.Popover(exampleEl, {})
+            popover.show();
+            console.log($('#temeratureCharts'));
+            loadCart('temperatureCharts');
+        }, () => {
+            $('#temp1').popover('hide');
+        })
+        $('#humi1').hover(() => {
+            let exampleEl = document.getElementById('humi1')
+            let popover = new bootstrap.Popover(exampleEl, {})
+            popover.show();
+            console.log($('#humidityCharts'));
+            loadCart('humidityCharts');
+        }, () => {
+            $('#humi1').popover('hide');
+        })
+        $('#prss1').hover(() => {
+            let exampleEl = document.getElementById('prss1')
+            let popover = new bootstrap.Popover(exampleEl, {})
+            popover.show();
+            console.log($('#pressureCharts'));
+            loadCart('pressureCharts');
+        }, () => {
+            $('#prss1').popover('hide');
+        })
+    })
+</script>
+
+<footer th:replace="fragments/Footer.html"></footer>
+<style>
+    .status-table thead th {
+        border-top: 2px solid #dee2e6;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .status-table thead th .label-span {
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .status-table thead th .value-span {
+        font-size: 1rem;
+    }
+
+    .popover {
+        max-width: none;
+        margin: 0 0 0 5rem!important;
+    }
+
+    .popover-body {
+        padding: 0.5rem;
+        height: 20rem;
+        width: 40rem !important;
+    }
+
+    .temperature-charts {
+        height: 20rem !important;
+        width: 40rem !important;
+    }
+</style>
+
+</html>

@@ -1,0 +1,56 @@
+/* MAIN TITLE */
+.main-title {
+    background-color: #2b354c;
+    height: 12em;
+    margin-bottom: 1.5em;
+}
+
+.main-title h1 {
+    font-family: 'Source Sans Pro', sans-serif;
+    color: white;
+    position: relative;
+    top: 2.5em;
+}
+
+
+#summary {
+    color: white;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+
+
+table {
+    border: black 0.5em;
+}
+
+td {
+    padding: 1em 2em;
+}
+
+
+
+/* DROPDOWNS AND BUTTON */
+select {
+    text-transform: none;
+    width: 10em;
+    padding: 0.1em 0.1em;
+}
+
+button.generate {
+    text-transform: none;
+    width: 12em;
+    padding: 0.5em 0.5em;
+    margin-left: 1em;
+    display: inline-block;
+    font-weight: bolder;
+}
+
+div.selection {
+    display: inline-block;
+    margin-left: 1.5em;
+}
+
+div.form {
+    padding: 0;
+}

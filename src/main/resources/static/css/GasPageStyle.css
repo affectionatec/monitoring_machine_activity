@@ -1,0 +1,15 @@
+/* Hide the style of certain functions of the pagination. */
+#SP-inbox-table_filter {
+    display: none;
+}
+
+tbody, td, tfoot, th, thead, tr {
+    border-style: none;
+}
+
+/* Border style for gas details pages. */
+.borderFunction {
+    border: 3px solid #1b6d85;
+    width: 450px;
+    float: left;
+}

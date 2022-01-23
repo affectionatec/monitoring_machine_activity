@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Equipments</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+          crossorigin="anonymous">
+    <header th:replace="fragments/Header.html"></header>
+
+</head>
+<body>
+<div class="container">
+    <h1>Equipments</h1>
+    <hr>
+    <h2>Save Equipment</h2>
+
+    <form action="#" th:action="@{/admin/saveEquipment}" th:object="${equipment}"
+          method="POST">
+
+        <label>Name:</label>
+        <input type="text" th:field="*{name}"
+               placeholder="Name" class="form-control mb-4 col-4">
+        <label>Inventory:</label>
+        <input type="text" th:field="*{inventory}"
+               placeholder="Inventory" class="form-control mb-4 col-4">
+        <label>Charge Rate:</label>
+        <input type="text" th:field="*{charge_rate}"
+               placeholder="Charge Rate" class="form-control mb-4 col-4">
+
+        <button type="submit" class="btn btn-info col-2"> Save Equipment</button>
+    </form>
+
+    <hr>
+
+    <a th:href = "@{/admin/equipment}"> Back to Equipments List</a>
+</div>
+</body>
+<footer th:replace="fragments/Footer.html"></footer>
+
+</html>

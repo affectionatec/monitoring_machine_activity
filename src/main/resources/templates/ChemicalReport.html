@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.Thymeleaf.org"
+>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chemical Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="css/Chemical.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script type="text/javascript" charset="utf8"
+            src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.js"></script>
+</head>
+
+<body>
+<header th:replace="fragments/Header.html"></header>
+
+<div>
+    <div class="container my-2">
+        <h2>Chemical</h2>
+
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add">
+            Add A New Chemical
+        </button>
+
+
+        <div class="input-group w-50" style="margin-top:10px; margin-bottom: 10px">
+            <span class="input-group-text" id="basic-addon1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
+                </svg>
+            </span>
+            <input type="text" class="form-control" id="searchUserName" placeholder="Search for Chemical Name" aria-label="Input group example" aria-describedby="basic-addon1" onkeyup="searchChemical()">
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="add" tabindex="-1" aria-labelledby="addingChemical" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addingChemical">Please enter new chemical information</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="myForm" th:action="@{/admin/addChemical}" method="post" onsubmit="return validateAdd()">
+                            <div class="mb-3">
+                                <label for="chemicalName" class="form-label">Name:</label>
+                                <input type="text" class="form-control" id="chemicalName" name="chemicalName">
+                            </div>
+                            <div class="mb-3">
+                                <label for="location" class="form-label">Location:</label>
+                                <input type="text" class="form-control" id="location" name="location">
+                            </div>
+                            <div class="mb-3">
+                                <label for="storage" class="form-label">Storage:</label>
+                                <input type="text" class="form-control" id="storage" name="storage" value="0">
+                            </div>
+                            <div class="mb-3">
+                                <label for="unit" class="form-label">Unit:</label>
+                                <input type="text" class="form-control" id="unit" name="unit">
+                            </div>
+                            <div class="mb-3">
+                                <label for="bottleNum" class="form-label">Bottle Number:</label>
+                                <input type="text" class="form-control" id="bottleNum" name="bottleNum">
+                            </div>
+                            <div class="mb-3">
+                                <label for="HazardLevel" class="form-label">HazardLevel:</label>
+                                <select class="form-select" id="HazardLevel" aria-label="Default select example"
+                                        name="level">
+                                    <option selected>Select Chemical Level</option>
+                                    <option>Explosives</option>
+                                    <option>Flammable</option>
+                                    <option>organic peroxides</option>
+                                    <option>Toxic</option>
+                                    <option>Radioactive</option>
+                                    <option>corrosion</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="submit">Submit</button>
+                            <button type="submit" class="btn btn-secondary" id="cancel" data-bs-dismiss="modal">Cancel
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <table class="table table-striped" id="allChemicalTable">
+            <thead>
+            <tr>
+                <th>Chemical ID</th>
+                <th>Chemical Name</th>
+                <th>Storage</th>
+                <th>Unit</th>
+                <th>Bottle Number</th>
+                <th>Hazard Level</th>
+                <th>Location</th>
+                <th>View</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="Chemical : ${allChemical}">
+                <td th:text="${Chemical.chemicalID}"></td>
+                <td th:text="${Chemical.chemicalName}"></td>
+                <td>
+                    <form th:action="@{/admin/updateStorage}" method="get">
+                        <input type="hidden" class="form-control" name="id" th:value="${Chemical.chemicalID}">
+                        <div style="float: left;">
+                            <input class="form-control storage" name="storage" th:value="${Chemical.storage}">
+                        </div>
+                        <div style="float: left;">
+                            <button type="submit" class="btn btn-primary">Modify</button>
+                        </div>
+                    </form>
+                </td>
+                <td th:text="${Chemical.unit}"></td>
+                <td th:text="${Chemical.bottleNum}"></td>
+                <td><img alt="hazardLevelPicture" th:src="${Chemical.levelPicture}" style="width:40px; height:40px"></td>
+                <td th:text="${Chemical.location}"></td>
+                <td><a class="btn btn-info" type="button"
+                       th:href="@{/admin/viewDelivery/{id}(id=${Chemical.chemicalID})}">View</a></td>
+                <td><a class="btn btn-primary" type="button"
+                       th:href="@{/admin/goIntoUpdatePage/{id}(id=${Chemical.chemicalID})}">Edit</a></td>
+                <td><a class="btn btn-danger" type="button"
+                       th:href="@{/admin/deleteChemical/{id}(id=${Chemical.chemicalID})}">Delete</a></td>
+            </tr>
+            </tbody>
+        </table>
+
+
+    </div>
+
+</div>
+
+<script th:inline="javascript">
+
+    var availableChemical = [[${allChemical}]];
+
+    function validateAdd() {
+        var name = document.forms["myForm"]["chemicalName"].value;
+        for (var i = 0; i < availableChemical.length; i++) {
+            if (name == availableChemical[i].chemicalName) {
+                alert("Chemical already exists");
+                return false;
+            }
+        }
+    }
+</script>
+
+
+<script>
+    //this is pagination and sorting table
+    $(document).ready(function () {
+        $('#allChemicalTable').DataTable({
+            "lengthMenu": [5, 10, 15, 20, 22]
+        });
+    });
+</script>
+
+<script type="text/javascript">
+
+    //Function to search based on user name and filter the results in the table
+    function searchChemical() {
+        var searchInp, searchFilter, usersTable, row, data, i, textVal;
+        searchInp = document.getElementById("searchUserName");
+        searchFilter = searchInp.value.toUpperCase();
+        usersTable = document.getElementById("allChemicalTable");
+        row = usersTable.getElementsByTagName("tr");
+
+        //Loop through the table rows and hide those who don't match the search filter
+        for (var i = 0; i < row.length; i++) {
+            data = row[i].getElementsByTagName("td")[1];
+            if (data) {
+                textVal = data.textContent || data.innerText;
+                if (textVal.toUpperCase().indexOf(searchFilter) > -1) {
+                    row[i].style.display = "";
+                } else {
+                    row[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous"></script>
+
+
+<footer th:replace="fragments/Footer.html"></footer>
+
+</body>
+</html>

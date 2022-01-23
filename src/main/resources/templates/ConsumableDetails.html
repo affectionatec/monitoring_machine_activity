@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>Consumable</title>
+<meta charset="utf-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+	<header th:replace="fragments/Header.html"></header>
+
+
+</head>
+<body>
+	<div class="container my-2">
+		<div>
+			<a href="/admin/showconsumables" class="btn btn-primary btn-sm " tabindex="-1" role="button" aria-disabled="true">All Consumables</a>
+			<a href="/admin/consumable_operation" class="btn btn-primary btn-sm " tabindex="-1" role="button" aria-disabled="true">Add New</a>
+			<a href="#" class="btn btn-primary btn-sm " tabindex="-1" role="button" aria-disabled="true" th:href="@{/all_consumable_orders}">All Orders</a>
+
+		</div>
+		<div class="">
+			<div>
+				<h3>Add new Consumable</h3>
+				<form id="add_new_consumable">
+					<div class="form-group">
+						<label class="control-label" for="name">Name:</label>
+						<input type="text" class="form-control" id="name"
+								placeholder="Enter Name" name="name" required></input>
+                    </div>
+					<div class="form-group">
+						<label class="control-label" for="description">Description:</label>
+						<input type="text" class="form-control" id="description"
+								placeholder="Enter Description" name="description" required></input>
+					</div>                    
+					<div class="form-group">
+						<label class="control-label" for="type">Type:</label>
+						<input type="text" class="form-control" id="type"
+								placeholder="Enter Type" name="type" required></input>
+					</div>                    
+					<div class="form-group">
+						<label class="control-label" for="stock">Stock:</label>
+						<input type="number" class="form-control" id="stock"
+								placeholder="Enter Stock" name="stock" min="1" max="100" required></input>
+					</div>                    
+					<button type="submit" class="btn btn-danger" id="btn-add-new-consumableDTO">ADD</button>
+				</form>
+				<div id="response" style="display:none; margin-top:10px">
+				</div>
+			</div>
+		</div>
+		<hr>		
+	</div>
+
+
+<script>
+	$(document).ready(function() {
+		$("#add_new_consumable").submit(function(evt) {
+			evt.preventDefault();
+
+			// PREPARE FORM DATA
+			let formData = {
+				name : $("#name").val(),
+				description :  $("#description").val(),
+				type: $("#type").val(),
+				stock: $("#stock").val()
+			}
+
+			$.ajax({
+				url: '/api/consumable/create',
+				type: 'POST',
+				contentType : "application/json",
+				data: JSON.stringify(formData),
+				dataType : 'json',
+				async: false,
+				cache: false,
+				success: function (response) {
+					let consumable = response.consumables[0];
+					let consumableString = "{ name: " + consumable.name + ", description" + consumable.description +
+							", type: " + consumable.type +
+							", stock: " + consumable.stock  + " }"
+					let successAlert = '<div class="alert alert-success alert-dismissible">' +
+							'<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+							'<strong>' + response.message + '</strong> Consumable\'s Info = ' + consumableString;
+					'</div>'
+					$("#response").append(successAlert);
+					$("#response").css({"display": "block"});
+
+					resetUploadForm();
+				},
+				error: function (response) {
+					let errorAlert = '<div class="alert alert-danger alert-dismissible">' +
+							'<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+							'<strong>' + response.message + '</strong>' + ' ,Error: ' + message.error +
+							'</div>'
+					$("#response").append(errorAlert);
+					$("#response").css({"display": "block"});
+
+					resetUploadForm();
+				}
+			});
+		});
+
+		function resetUploadForm(){
+			$("#name").val("");
+			$("#description").val("");
+			$("#type").val("");
+			$("#stock").val("");
+		}
+
+		(function(){
+			let pathname = window.location.pathname;
+			if(pathname === "/"){
+				$(".nav .nav-item a:first").addClass("active");
+			} else if (pathname == "/consumables_operation") {
+				$(".nav .nav-item a:last").addClass("active");
+			}
+		})();
+	});
+
+
+
+</script>
+</body>
+<footer th:replace="fragments/Footer.html"></footer>
+
+</html>

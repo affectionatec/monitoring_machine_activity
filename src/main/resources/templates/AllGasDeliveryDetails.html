@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.Thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes">
+    <meta name="description" content="This is a page that show all gas delivery details and related operations.">
+    <title>Gas Delivery Details Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/GasPageStyle.css}">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.js"></script>
+
+</head>
+<body>
+    <header th:replace="fragments/Header.html"></header>
+
+    <div class="container my-2">
+        <main class="pageContent">
+            <h2>Current Gas Name:
+                <span th:text="${gasName.name}"></span>
+            </h2>
+
+            <br>
+
+            <section class="function">
+                <div class="borderFunction">
+                    <h3>Add new Delivery</h3>
+                    <form id="submitForm" action="/admin/Site/AddGasDelivery" onsubmit="return validateForm()">
+                        <input type="hidden" th:value="${gasName.id}" name="gasID">
+                        <label class="form-label">Gas Delivery Date: <input type="date" class="col-form-label" name="deliveryDate"></label>
+                        <button type="submit" class="btn btn-success">Add</button>
+                    </form>
+                </div>
+
+                <!-- Solve the problem that the br tag does not wrap after css:float. -->
+                <div style="clear:both;"></div>
+                <br>
+            </section>
+
+            <table class="table table-striped" id="SP-inbox-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Delivery ID</th>
+                        <th scope="col">Delivery Date</th>
+                        <th scope="col">Expiry Date</th>
+                        <th scope="col">Distribution Weight</th>
+                        <th scope="col">Delivery Staff</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="allGasDeliveryDetail:${allGasDeliveryDetails}">
+                        <td th:text="${allGasDeliveryDetail.deliveryID}"></td>
+                        <td th:text="${allGasDeliveryDetail.deliveryDate}"></td>
+                        <td th:text="${allGasDeliveryDetail.expiryDate}"></td>
+                        <td th:text="${allGasDeliveryDetail.distributionWeight}"></td>
+                        <td th:text="${allGasDeliveryDetail.deliveryStaff}"></td>
+                        <td><a class="btn btn-danger" th:href="@{/admin/deleteGasDelivery/{id}(id=${allGasDeliveryDetail.deliveryID})}">Delete</a></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <nav class="back">
+                <a href="/admin/gasDetail" class="btn btn-danger">Back to gas lists</a>
+            </nav>
+        </main>
+    </div>
+
+    <script>
+        function validateForm() {
+            var deliveryDate = document.forms["submitForm"]["deliveryDate"].value;
+            if(deliveryDate == "") {
+                alert("Date must be filled out");
+                return false;
+            }
+        }
+    </script>
+
+    <script>
+        //this is pagination and sorting table
+        $(document).ready(function() {
+            $('#SP-inbox-table').DataTable({
+                "lengthMenu": [ 5, 10, 15, 20, 22 ]
+            });
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+            crossorigin="anonymous"></script>
+
+    <footer th:replace="fragments/Footer.html"></footer>
+</body>
+</html>

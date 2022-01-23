@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>LaundryInfoPage</title>
+    <!-- bootstrap stylesheet -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+          integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <!-- jquery, bootstrap, echarts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.1.2/dist/echarts.min.js"></script>
+
+
+    <style>
+        .spInboxWrapper {
+            margin-left: 2em;
+            margin-right: 2em;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <!-- page label -->
+    <div class="page-label"><span>Laundry</span><span class="laundry-id-span"></span></div>
+
+    <div class="content-container">
+        <div class="laundry-select-container">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Barcode</th>
+                    <th>Status</th>
+                    <th>Comment</th>
+                    <th>Operation</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="laundry:${laundries}">
+                    <td>
+                        <span id="barcode" th:text="${laundry.barcode}"></span>
+                    </td>
+                    <td>
+                        <span id="laundry_status" th:text="${laundry.status}"></span>
+                    </td>
+                    <td>
+                        <span id="laundry_comment" th:text="${laundry.comment}"></span>
+                    </td>
+
+                    <td>
+                        <a href="javascript:void(0);" onclick="callLaundryEditModal()"
+                           style="color: #0069d9">Edit</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="search-container">
+<!--            <input class="laundry-search-input" type="text" name="infoSearchInput" />-->
+<!--            <button class="btn btn-primary" onclick="searchLaundryInfo()">Search</button>-->
+            <button class="add-new-item-button btn btn-primary" onclick="calladdNewModal()">Add new Item</button>
+        </div>
+        <div class="laundry-table-container">
+
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="editLaundryModal" tabindex="-1" aria-labelledby="newModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title edit-laundry-modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body edit-laundry-modal-body">
+                <div class="edit-laundry-panel">
+
+                </div>
+            </div>
+            <div class="modal-footer edit-laundry-modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="addNewItemModal" tabindex="-1" aria-labelledby="newModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title add-modal-title">Add New Item</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body add-modal-body">
+                <div class="add-panel">
+
+                </div>
+            </div>
+            <div class="modal-footer add-modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="editInfoModal" tabindex="-1" aria-labelledby="newModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title edit-modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body edit-modal-body">
+                <div class="edit-panel">
+
+                </div>
+            </div>
+            <div class="modal-footer edit-modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="deleteInfoModal" tabindex="-1" aria-labelledby="newModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title delete-modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body delete-modal-body">
+
+            </div>
+            <div class="modal-footer delete-modal-footer">
+                <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="addNewOption()">Save</button> -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+<!-- jquery, bootstrap, echarts -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+        crossorigin="anonymous"></script>
+<script>
+    let getQueryVariable = (variable) => {
+        var query = window.location.href;
+        let list = query.split("/");
+        if (list && list.length > 0) {
+            return list[list.length - 1]
+        } else return false;
+    }
+    //get laundry info according to barcode
+    let getLaundryInfo = () => {
+        let barcode = getQueryVariable("barcode");
+        let test = JSON.stringify({ barcode: barcode });
+        console.log(test);
+        $.ajax({
+            url: '/getLaundryInfoByCode',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify({ barcode: barcode }),
+            success: (res) => {
+                res = JSON.parse(res);
+                loadItemsList(res);
+            },
+            error: (er) => {
+                console.log('fail.');
+            }
+        })
+    }
+
+    //edit laundry info function
+    let callLaundryEditModal = () => {
+        let barcode = getQueryVariable("barcode");
+        $(".edit-laundry-modal-title").html(`Edit laundry (Barcode:${barcode})`);
+        $(".edit-laundry-panel").html(`
+            <label for="laundryStatus">Status:</label>
+            <input type="text" name="laundyStatus" id="laundry_status_input"/><br />
+            <label for="laundryComment">Comment:</label>
+            <input type="text" name="laundyComment" id="laundry_comment_input"/><br />
+            <br/>
+        `);
+        let status = $("#laundry_status").html();
+        let comment = $("#laundry_comment").html();
+        $("#laundry_status_input").val(status);
+        $("#laundry_comment_input").val(comment);
+        $(".edit-laundry-modal-footer").html(`
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="submitLaundryEdit('${barcode}')">Save</button>
+        `);
+        $("#editLaundryModal").modal("show");
+    }
+    let submitLaundryEdit = (barcode) => {
+        let status = $("#laundry_status_input").val();
+        let comment = $("#laundry_comment_input").val();
+        let data = {
+            barcode: barcode,
+            status: status,
+            comment: comment
+        }
+        console.log(JSON.stringify(data));
+        $.ajax({
+            url: '/update/laundryInfo',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: (res) => {
+                // console.log(res);
+                res = JSON.parse(res)
+                $("#editLaundryModal").modal("hide");
+                $("#laundry_status").html(res.status);
+                $("#laundry_comment").html(res.comment);
+            },
+            error: (er) => {
+                console.log('fail.')
+                $("#editLaundryModal").modal("hide");
+            }
+        })
+    }
+    let searchLaundryInfo = () => {
+        let inputVal = $(".laundry-search-input").val();
+        let data = {
+            id: inputVal
+        }
+        $.ajax({
+            url: '#',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: (res) => {
+                // console.log(res);
+                loadItemsList(res);
+                $("#editLaundryModal").modal("hide");
+            },
+            error: (er) => {
+                console.log('fail.')
+                $("#editLaundryModal").modal("hide");
+            }
+        })
+    }
+
+    //edit item function
+    let callEditModal = (id, item, size, status) => {
+        $(".edit-modal-title").html(`Edit ${item} (ID:${id})`);
+        $(".edit-panel").html(`
+            <label for="size">Size:</label>
+            <input type="text" name="size" id="size"/><br />
+            <label for="status">Status:</label>
+            <select name="status" id="status">
+                <option value="in use">In use</option>
+                <option value="off site being laundered">Off site being laundered</option>
+                <option value="on site ready to use">On site ready to use</option>
+                <option value="out for repair">Out for repair</option>
+            </select>
+            <br/>
+        `);
+        $("#status").val(status);
+        $("#size").val(size);
+        $(".edit-modal-footer").html(`
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="submitEdit('${id}', '${item}')">Save</button>
+        `);
+
+        $("#editInfoModal").modal("show");
+    }
+    let submitEdit = (id, item) => {
+        let status = $("#status").val();
+        let size = $("#size").val();
+        let data = {
+            id: id,
+            item: item,
+            size: size,
+            barcode: getQueryVariable('barcode'),
+            status: status
+        }
+        console.log(JSON.stringify(data));
+        $.ajax({
+            url: '/update/laundryItems',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: (res) => {
+                console.log(res)
+                res = JSON.parse(res)
+                console.log(res)
+                if (typeof res == "string") {
+                    alert('res')
+                }
+                if (typeof res == "object") {
+                    $("#editInfoModal").modal("hide");
+                    loadItemsList(res);
+                }
+            },
+            error: (er) => {
+                console.log('fail.')
+                $("#editInfoModal").modal("hide");
+            }
+        })
+    }
+
+    //delete item function
+    let callDeleteModal = (id, item) => {
+        $(".delete-modal-title").html(`Delete ${item} (ID: ${id})`);
+        $(".delete-modal-body").html(`Are you sure to delete ${item} (ID: ${id})?`)
+        $(".delete-modal-footer").html(`
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="submitDelete('${id}', '${item}')">Confirm</button>
+        `);
+        $("#deleteInfoModal").modal("show");
+    }
+    let submitDelete = (id, item) => {
+        let data = {
+            barcode: getQueryVariable('barcode'),
+            id: id,
+            item: item
+        }
+        $.ajax({
+            url: '/delete/laundryItem',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: (res) => {
+                // console.log(res);
+                res = JSON.parse(res);
+                $("#deleteInfoModal").modal("hide");
+                loadItemsList(res);
+            },
+            error: (er) => {
+                console.log('fail.')
+                $("#deleteInfoModal").modal("hide");
+            }
+        })
+    }
+    let loadItemsList = (res) => {
+        let tableStr = ``;
+        let tableHeadStr = ``;
+        let tableBodyStr = ``;
+        if (res && res.length > 0) {
+            let trStr = ``;
+            res.map((ele, index) => {
+                trStr = trStr + `
+                    <tr>
+                        <td>${ele.item}</td>
+                        <td>${ele.id}</td>
+                        <td>${ele.size}</td>
+                        <td>${ele.status}</td>
+                        <td>
+                            <a class="edit-a" onclick="callEditModal('${ele.id}', '${ele.item}', '${ele.size}', '${ele.status}')">Edit</a>
+                            <a class="delete-a" onclick="callDeleteModal('${ele.id}', '${ele.item}')">Delete</a>
+                        </td>
+                    </tr>
+                 `;
+            })
+
+            tableBodyStr = `<tbody>${trStr}</tbody>`;
+        }
+        tableHeadStr = `<thead>
+            <tr>
+                <th>Item</th>
+                <th>Id</th>
+                <th>Size</th>
+                <th>Status</th>
+                <th>Operation</th>
+            </tr>
+        </thead>`
+        tableStr = `<table class="table">${tableHeadStr}${tableBodyStr}</table>`;
+        $(".laundry-table-container").html(tableStr);
+    }
+
+    // add item function
+    let calladdNewModal = () => {
+        console.log("raising add new item modal.");
+        $(".add-panel").html(`
+            <label for="item">Item:</label>
+            <select name="item" id="itemAdd">
+                <option value="suit">Suit</option>
+                <option value="boots">Boots</option>
+                <option value="hood">Hood</option>
+            </select><br/>
+            <label for="size">Size:</label>
+            <input type="text" name="size" id="sizeAdd"/><br />
+            <label for="status">Status:</label>
+            <select name="status" id="statusAdd">
+                <option value="in use">In use</option>
+                <option value="off site being laundered">Off site being laundered</option>
+                <option value="on site ready to use">On site ready to use</option>
+                <option value="out for repair">Out for repair</option>
+            </select>
+            <br/>
+        `);
+
+        $(".add-modal-footer").html(`
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="submitNew()">Save</button>
+        `);
+
+        $("#addNewItemModal").modal("show");
+    }
+    let submitNew = () => {
+        let item = $("#itemAdd").val();
+        let size = $("#sizeAdd").val();
+        let status = $("#statusAdd").val();
+        let barcode = getQueryVariable();
+        let data = {
+            barcode: barcode,
+            item: item,
+            size: size,
+            status: status
+        };
+        console.log(data);
+        $.ajax({
+            url: '/add/laundryItems',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: (res) => {
+                console.log(res)
+                res = JSON.parse(res)
+                console.log(res)
+                if (typeof res == "string") {
+                    alert('res')
+                }
+                if (typeof res == "object") {
+                    $("#addNewItemModal").modal("hide");
+                    loadItemsList(res);
+                }
+            },
+            error: (er) => {
+                console.log('fail.')
+                $("#addNewItemModal").modal("hide");
+            }
+        })
+    }
+
+</script>
+
+<script>
+    // $(".laundry-id-span").html(`(Barcode: ${getQueryVariable("barcode")})`);
+
+    $(() => {
+        getLaundryInfo();
+    })
+</script>
+
+
+<style>
+    body {
+        background-color: #e0e0e9;
+    }
+
+    .button-container {
+        padding: 2rem 0 1rem 2rem;
+        font-size: 1rem;
+        font-weight: 500;
+        overflow: auto;
+        background-color: #fff;
+    }
+
+    .button-container>.component-label {
+        float: left;
+    }
+
+    .button-container>.btn-graph {
+        float: right;
+    }
+
+    .table-container-bg {
+        background-color: #fff;
+        margin: 1rem 0 0 0;
+        padding: 2rem;
+    }
+
+    .table-container {
+        background-color: #fff;
+
+        height: 20rem;
+        overflow-y: scroll;
+    }
+
+    .graph-container {
+        background-color: #fff;
+
+        padding: 0 1rem 1.5rem 1rem;
+        /* margin: 2rem 0 5rem 5rem; */
+    }
+
+    .graph-container .button-graph label {
+        float: left;
+        font-size: 1rem;
+        margin: 0.5rem 0 0 0;
+    }
+
+    .graph-container .button-graph select {
+        margin: 0 5rem 0 2rem;
+        width: 10rem;
+        float: left;
+    }
+
+    .content-container {
+        background-color: #fff;
+        margin: 1rem 0 0 0;
+        padding: 2rem 0 1rem 2rem;
+    }
+
+    .content-container>.laundry-select-container {
+        margin: 1rem 0 0 0;
+        padding: 0 2rem 0 0;
+    }
+
+    .content-container>.laundry-table-container {
+        margin: 1rem 0 0 0;
+        padding: 0 2rem 0 0;
+    }
+
+    .add-new-item-button {
+        margin: 0 0 0 2rem;
+    }
+</style>
+
+<!--<footer th:replace="fragments/Footer.html"></footer>-->
+
+
+</html>

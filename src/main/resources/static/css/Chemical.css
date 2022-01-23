@@ -1,0 +1,11 @@
+.container{
+    max-width: 90%;
+}
+
+.storage{
+    width: 80px;
+}
+
+#allChemicalTable_filter{
+    display: none;
+}

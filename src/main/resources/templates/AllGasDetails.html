@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.Thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes">
+    <meta name="description" content="This is a page that show all gas details and related operations.">
+    <title>Gas Details Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/GasPageStyle.css}">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.js"></script>
+
+</head>
+<body>
+    <header th:replace="fragments/Header.html"></header>
+
+    <div class="container my-2">
+        <main class="pageContent">
+            <h2>Gas Lists</h2>
+
+            <br>
+
+            <section class="function">
+                <div class="borderFunction">
+                    <h3>Search Box</h3>
+                    <form id="searchNameForm" action="/admin/searchGasName/" method="get" onsubmit="return validateNameSearch()">
+                        <label class="form-label">Search by Name: <input type="text" class="col-form-label" name="name" placeholder="Enter Name"></label>
+                        <button type="submit" class="btn btn-success">Search</button>
+                    </form>
+                    <form id="searchLocationForm" action="/admin/searchGasLocation/" method="get" onsubmit="return validateLocationSearch()">
+                        <label class="form-label">Search by Location: <input type="text" class="col-form-label" name="location" placeholder="Enter Location"></label>
+                        <button type="submit" class="btn btn-success">Search</button>
+                    </form>
+                </div>
+
+                <div class="borderFunction" style="margin-left:30px">
+                    <h3>Add new Gas</h3>
+                    <form id="submitForm" action="/admin/Site/AddGas" onsubmit="return validateAdd()">
+                        <label class="form-label">Gas Name: <input type="text" class="col-form-label" name="name" placeholder="Enter New Gas Name"></label>
+                        <button type="submit" class="btn btn-success">Add</button>
+                    </form>
+                </div>
+
+                <!-- Solve the problem that the br tag does not wrap after css:float. -->
+                <div style="clear:both;"></div>
+                <br>
+            </section>
+
+            <table class="table table-striped" id="SP-inbox-table">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Storage</th>
+                        <th scope="col">Unit</th>
+                        <th scope="col">Bottle Number</th>
+                        <th scope="col">COSHH</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Hazard Level</th>
+                        <th scope="col">Comments</th>
+                        <th scope="col">Action1</th>
+                        <th scope="col">Action2</th>
+                        <th scope="col">Action3</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="allGasDetail:${allGasDetails}">
+                        <td th:text="${allGasDetail.id}"></td>
+                        <td th:text="${allGasDetail.name}"></td>
+                        <td th:text="${allGasDetail.storage}"></td>
+                        <td th:text="${allGasDetail.unit}"></td>
+                        <td th:text="${allGasDetail.bottleNum}"></td>
+                        <td th:text="${allGasDetail.coshh}"></td>
+                        <td th:text="${allGasDetail.location}"></td>
+                        <td><img alt="This is image of the hazard levels for different types of gas" th:src="${allGasDetail.hazardLevel}" style="width:40px; height:40px"></td>
+                        <td th:text="${allGasDetail.comments}"></td>
+                        <td><a class="btn btn-info" th:href="@{/admin/view(id=${allGasDetail.id})}">View</a></td>
+                        <td><a class="btn btn-primary" th:href="@{/admin/toEditGas(id=${allGasDetail.id})}">Edit</a></td>
+                        <td><a class="btn btn-danger" th:href="@{/admin/deleteGas/{id}(id=${allGasDetail.id})}">Delete</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
+    </div>
+
+    <script>
+        function validateNameSearch() {
+            var name = document.forms["searchNameForm"]["name"].value;
+            if(name == "") {
+                alert("Name must be filled out");
+                return false;
+            }
+        }
+    </script>
+
+    <script>
+        function validateLocationSearch() {
+            var location = document.forms["searchLocationForm"]["location"].value;
+            if(location == "") {
+                alert("Location must be filled out");
+                return false;
+            }
+        }
+    </script>
+
+    <!-- Duplicate gas names cannot be added. -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        //the list converts as a javascript object
+        var availableGas = [[${allGasDetails}]];
+        // console.log(availableGas[1].name)
+        /*]]>*/
+        function validateAdd() {
+            var name = document.forms["submitForm"]["name"].value;
+            if(name == "") {
+                alert("Name must be filled out");
+                return false;
+            }
+            for(var i = 0; i < availableGas.length; i++) {
+                if(name == availableGas[i].name) {
+                    alert("Gas name already exists");
+                    return false;
+                }
+            }
+        }
+    </script>
+
+    <script>
+        //this is pagination and sorting table
+        $(document).ready(function () {
+            $('#SP-inbox-table').DataTable({
+                "lengthMenu": [ 5, 10, 15, 20, 22 ]
+            });
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+            crossorigin="anonymous"></script>
+
+    <footer th:replace="fragments/Footer.html"></footer>
+</body>
+</html>

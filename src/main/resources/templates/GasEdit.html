@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.Thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes">
+    <meta name="description" content="This is a page that used to edit gas information.">
+    <title>Edit Gas Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
+</head>
+<body>
+    <header th:replace="fragments/Header.html"></header>
+
+    <div class="container my-2">
+        <main class="pageContent">
+            <h2>Edit Gas</h2>
+            <form class="form-horizontal" th:action="@{/admin/updateGas}" th:object="${gas}" method="post">
+                <input type="hidden" name="id" th:value="*{id}">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name:</label>
+                    <input type="text" class="form-control" id="name" name="name" th:value="*{name}">
+                </div>
+                <div class="row g-3">
+                    <div class="col mb-3">
+                        <label for="storage" class="form-label">Storage:</label>
+                        <input type="text" class="form-control" id="storage" name="storage" th:value="*{storage}">
+                    </div>
+                    <div class="col mb-3">
+                        <label for="unit" class="form-label">Unit:</label>
+                        <select class="form-select" id="unit" aria-label="Default select example" name="unit">
+                            <option th:text="*{unit}" selected></option>
+                            <option>kg</option>
+                            <option>g</option>
+                            <option>litres</option>
+                        </select>
+                    </div>
+                    <div class="col mb-3">
+                        <label for="bottleNum" class="form-label">Bottle Number:</label>
+                        <input type="text" class="form-control" id="bottleNum" name="bottleNum" th:value="*{bottleNum}">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="coshh" class="form-label">COSHH:</label>
+                    <input type="text" class="form-control" id="coshh" name="coshh" th:value="*{coshh}">
+                </div>
+                <div class="mb-3">
+                    <label for="location" class="form-label">Location:</label>
+                    <input type="text" class="form-control" id="location" name="location" th:value="*{location}">
+                </div>
+                <div class="mb-3">
+                    <label for="hazardLevel" class="form-label">Hazard Level:</label>
+                    <select class="form-select" id="hazardLevel" aria-label="Default select example" name="hazardLevel">
+                        <option th:each="gases:${gas}" th:value="${gases.hazardLevel}" th:text="${gases.hazardLevel}">Select Gas Level</option>
+                        <option th:each="levels:${level}" th:value="${levels.hazardLevel}" th:text="${levels.hazardLevel}"></option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="comments" class="form-label">Comments:</label>
+                    <textarea class="form-control" id="comments" name="comments" th:text="*{comments}"></textarea>
+                </div>
+
+                <hr>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                        <a href="/admin/gasDetail" class="btn btn-danger">Back to gas lists</a>
+                    </div>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <footer th:replace="fragments/Footer.html"></footer>
+</body>
+</html>

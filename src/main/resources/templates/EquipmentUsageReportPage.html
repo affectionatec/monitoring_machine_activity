@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>EquipmentUsageReportPage</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+          integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <!-- jquery, bootstrap, echarts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.1.2/dist/echarts.min.js"></script>
+
+
+    <header th:replace="fragments/Header.html"></header>
+</head>
+<body>
+<div class="container" style="padding: 0 0 10rem 0" id="printPage">
+    <div class="button-container">
+        <div class="component-label" style=font-size:1.5rem;font-weight:500>Equipments List</div>
+
+    </div>
+    <div class="table-container-bg">
+        <div class="table-container">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Inventory</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="equipment:${equipmentList}">
+                    <th>
+                        <span class="id"th:text="${equipment.id}"></span>
+                    </th>
+
+                    <td>
+                        <span class="id" th:text="${equipment.name}"></span>
+                    </td>
+                    <td>
+                        <span class="id" th:text="${equipment.inventory}"></span>
+                    </td>
+
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="button-container">
+        <div class="component-label" style=font-size:1.5rem;font-weight:500>Equipments Booked Info</div>
+
+    </div>
+    <div class="table-container-bg">
+        <div class="table-container">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Equipment name</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Booked Date</th>
+                    <th scope="col">Booked Time</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="equipmentBooked:${equipmentsBookedInfo}">
+                    <th>
+                        <span class="id"th:text="${equipmentBooked.equipmentName}"></span>
+                    </th>
+
+                    <td>
+                        <span class="id" th:text="${equipmentBooked.userName}"></span>
+                    </td>
+                    <td>
+                        <span class="id" th:text="${equipmentBooked.bookedDate}"></span>
+                    </td>
+                    <td>
+                        <span class="id" th:text="${equipmentBooked.time}"></span>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="button-container">
+        <div class="component-label" style=font-size:1.5rem;font-weight:500>Equipments Used Info</div>
+
+    </div>
+    <div class="table-container-bg">
+        <div class="table-container">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Equipment name</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Used Date</th>
+                    <th scope="col">Used Time</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr  th:each="equipmentUsed:${equipmentsUsedInfo}">
+                    <th>
+                        <span class="id"th:text="${equipmentUsed.equipmentName}"></span>
+                    </th>
+
+                    <td>
+                        <span class="id" th:text="${equipmentUsed.userName}"></span>
+                    </td>
+                    <td>
+                        <span class="id" th:text="${equipmentUsed.bookedDate}"></span>
+                    </td>
+                    <td>
+                        <span class="id" th:text="${equipmentUsed.time}"></span>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="graph-container">
+        <button  class="btn btn-primary btn-graph" onclick="printPage()">Generate PDF</button>
+    </div>
+
+
+
+</div>
+
+</body>
+<script type="text/javascript" th:src="@{/js/jqprint-0.3.js}"></script>
+<script src="http://www.jq22.com/jquery/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript">
+    let printPage=() =>{
+        $('#printPage').jqprint();
+    }
+
+</script>
+</html>

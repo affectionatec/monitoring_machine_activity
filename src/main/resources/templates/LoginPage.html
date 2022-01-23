@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/LoginPage.css}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300&display=swap" rel="stylesheet">
+    <title>Login</title>
+</head>
+<body>
+    <div class="main-title">
+        <img th:src="@{/img/ICS_official.jpg}" height="60px">
+        <h1 style="margin-left:20px;">Login</h1>
+        <span class="login-span" id="qrcode_span" data-bs-container="body" data-bs-placement="left"
+              data-bs-toggle="popover" data-bs-html="true"
+              data-bs-content="<div class='qrcode-container' id='qrcode_container'></div><div class='qrcode-tips'>Scan Barcode to Login on Mobile</div>">Login on mobile</span>
+    </div>
+
+    <div class="login">
+        <div class="username">
+            <label for="username">Username</label>
+            <input id="username" type="text">
+        </div>
+        <div class="password">
+            <label for="password">Password</label>
+            <input id="password" type="password">
+        </div>
+        <button>Log In</button>
+    </div>
+</body>
+
+<script>
+    let button = document.querySelector("button");
+
+    button.addEventListener("click", authenticate)
+
+    let getQueryVariable = () => {
+        var query = window.location.href;
+        let list = query.split("/");
+        if (list && list.length > 0) {
+            return list[list.length - 1]
+        } else return false;
+    }
+
+    function authenticate() {
+        let username = document.querySelector("#username").value;
+        let password = document.querySelector("#password").value;
+
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/authenticate", true);
+        xhr.setRequestHeader("Content-type", "application/json");
+
+        let loginInfo = { username: username, password: password };
+        let loginInfoJSON = JSON.stringify(loginInfo);
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    // using object destructuring to get jwt and the authority/role of the logged-in user
+                    let { jwt } = JSON.parse(xhr.response);
+                    let { authority } = JSON.parse(xhr.response);
+
+                    // use authority/role to determine landing page
+                    if (authority == "ROLE_ADMIN" || authority == "ROLE_SUPERADMIN") {
+                        if ((navigator.userAgent.match(/(iPhone|iPod|Android|ios|iOS|iPad|Backerry|WebOS|Symbian|Windows Phone|Phone)/i))) {
+                            // alert("phone.");
+                            window.location.href = "/laundry/" + getQueryVariable();
+                        } else {
+                        window.location.href = "/admin/home"}
+                    } else if (authority == "ROLE_USER") {
+                        if ((navigator.userAgent.match(/(iPhone|iPod|Android|ios|iOS|iPad|Backerry|WebOS|Symbian|Windows Phone|Phone)/i))) {
+                            // alert("phone.");
+                            window.location.href = "/laundry/" + getQueryVariable();
+                        } else {
+                            window.location.href = "/";
+                            // console.log("pc.");
+                        }
+                    }
+                } else {
+                    alert("Incorrect Username or Password!")
+                }
+            }
+        }
+
+        xhr.send(loginInfoJSON);
+    }
+</script>
+
+
+</html>

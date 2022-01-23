@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes">
+    <meta name="description" content="This is a page that used to receive training requests.">
+    <title>Training Request</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+</head>
+<body>
+<header th:replace="fragments/Header.html"></header>
+
+<div class="container my-2">
+    <main class="pageContent">
+        <h2>Training Request Alerts</h2>
+
+        <br>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">User Name</th>
+                <th scope="col">Equipment Name</th>
+                <th scope="col">Request Date</th>
+                <th scope="col">Approve</th>
+                <th scope="col">Deny</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="Request: ${allRequests}">
+                <td th:text="${Request.getId()}"></td>
+                <td th:text="${Request.getUsername()}"></td>
+                <td th:text="${Request.getEquipmentName()}"></td>
+                <td th:text="${Request.getDateTrained()}"></td>
+                <td><a class="btn btn-primary" type="button" aria-label="Approve" th:href="@{/admin/approveOrDeny/{id}/{mark}(id = ${Request.getId()}, mark = 1)}">Approve</a></td>
+                <td><a class="btn btn-danger" type="button" aria-label="Deny" th:href="@{/admin/approveOrDeny/{id}/{mark}(id = ${Request.getId()}, mark = 0)}">Deny</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </main>
+</div>
+
+</body>
+<footer th:replace="fragments/Footer.html"></footer>
+</html>

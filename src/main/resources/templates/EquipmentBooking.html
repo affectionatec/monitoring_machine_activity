@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking Equipment Page</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" th:href="@{/css/EquipmentBooking.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300&display=swap" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+    <header th:replace="fragments/HeaderForUser.html"></header>
+    <div class="main-title">
+        <h1 style="margin-left:20px;">Book Your Equipment</h1>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search">
+        <input type="text" id="searchbar" class="searchTerm" placeholder="Search for equipment">
+        <button type="submit" aria-label="Search button" class="searchButton" onclick="search_equipment()">
+            <i class="fa fa-search"></i>
+        </button>
+    </div>
+
+    <!-- Main -->
+    <section id="equipment_lists" class="cards">
+        <!-- card 1 -->
+        <article id="e1" class="card unavailable-card">
+            <picture class="thumbnail">
+                <img class="card-img-top" src="img/ICP1.jpeg" alt="Card image cap">
+            </picture>
+            <div class="card-block">
+                <p class="category category__01">TYPE A CS</p>
+                <h2 class="card-title">ICP1</h2>
+                <p class="card-text">Most compound semiconductors are from combinations of elements from GroupIII and GroupV of the Periodic Table of the Elements (GaAs, GaP, InP and others).</p>
+            </div>
+            <div>
+                <form action="/equipmentBooking/datetime" method="post" hidden>
+                    <button type="submit" name="equipmentID" value="e1">Book Now</button>
+                </form>
+            </div>
+            <button class="training" >Request Training</button>
+        </article>
+        <!-- card 2 -->
+        <article id="e2" class="card unavailable-card">
+            <picture class="thumbnail">
+                <img class="card-img-top" src="img/ICP1.jpeg" alt="Card image cap">
+            </picture>
+            <div class="card-block">
+                <p class="category category__01">TYPE A CS</p>
+                <h2 class="card-title">ICP2</h2>
+                <p class="card-text">Most compound semiconductors are from combinations of elements from GroupIII and GroupV of the Periodic Table of the Elements (GaAs, GaP, InP and others).</p>
+            </div>
+            <div>
+                <form action="/equipmentBooking/datetime" method="post" hidden>
+                    <button name="equipmentID" value="e2">Book Now</button>
+                </form>
+            </div>
+            <button class="training" >Request Training</button>
+        </article>
+        <!-- card 3 -->
+        <article id="e3" class="card unavailable-card">
+            <picture class="thumbnail">
+                <img class="card-img-top" src="img/ICP1.jpeg" alt="Card image cap">
+            </picture>
+            <div class="card-block">
+                <p class="category category__01">TYPE A CS</p>
+                <h2 class="card-title">ICP3</h2>
+                <p class="card-text">Most compound semiconductors are from combinations of elements from GroupIII and GroupV of the Periodic Table of the Elements (GaAs, GaP, InP and others).</p>
+            </div>
+            <div>
+                <form action="/equipmentBooking/datetime" method="post" hidden>
+                    <button name="equipmentID" value="e3">Book Now</button>
+                </form>
+            </div>
+            <button class="training">Request Training</button>
+        </article>
+        <!-- card 4 -->
+        <article id="e4" class="card unavailable-card">
+            <picture class="thumbnail">
+                <img class="card-img-top" src="img/Evap4.jpeg" alt="Card image cap">
+            </picture>
+            <div class="card-block">
+                <p class="category category__02">TYPE B CS</p>
+                <h2 class="card-title">EVAP4</h2>
+                <p class="card-text">Other compound semiconductors are made from Groups II and VI (CdTe, ZnSe and others). It is also possible to use different elements from within the same group (IV).</p>
+            </div>
+            <div>
+                <form action="/equipmentBooking/datetime" method="post" hidden>
+                    <button type="submit" name="equipmentID" value="e4">Book Now</button>
+                </form>
+            </div>
+            <button class="training">Request Training</button>
+        </article>
+        <!-- card 5 -->
+        <article id="e5" class="card unavailable-card">
+            <picture class="thumbnail">
+                <img class="card-img-top" src="img/Evap5.jpeg" alt="Card image cap">
+            </picture>
+            <div class="card-block">
+                <p class="category category__02">TYPE B CS</p>
+                <h2 class="card-title">EVAP5</h2>
+                <p class="card-text">Other compound semiconductors are made from Groups II and VI (CdTe, ZnSe and others). It is also possible to use different elements from within the same group (IV).</p>
+            </div>
+            <div>
+                <form action="/equipmentBooking/datetime" method="post" hidden>
+                    <button name="equipmentID" value="e5">Book Now</button>
+                </form>
+            </div>
+            <button class="training">Request Training</button>
+        </article>
+        <!-- card 6 -->
+        <article id="e6" class="card unavailable-card">
+            <picture class="thumbnail">
+                <img class="card-img-top" src="img/Evap6.jpeg" alt="Card image cap">
+            </picture>
+            <div class="card-block">
+                <p class="category category__02">TYPE B CS</p>
+                <h2 class="card-title">EVAP6</h2>
+                <p class="card-text">Other compound semiconductors are made from Groups II and VI (CdTe, ZnSe and others). It is also possible to use different elements from within the same group (IV).</p>
+            </div>
+            <div>
+                <form action="/equipmentBooking/datetime" method="post" hidden>
+                    <button name="equipmentID" value="e6">Book Now</button>
+                </form>
+            </div>
+            <button class="training">Request Training</button>
+        </article>
+    </section>
+
+    <!-- Generate ids, values and onclick methods of each training button automatically for each class to facilitate the transmission of requests. -->
+    <!-- values represent each equipment's id in database  -->
+    <script type="text/javascript">
+        function generateIdAndValues(){
+            var trainButton = document.getElementsByClassName("training");
+            var trainCard = document.getElementsByClassName("card");
+            for (var i = 0; i<trainCard.length; i++){
+                var count = i+1;
+                trainButton[i].setAttribute("id", "training"+i);
+                trainButton[i].setAttribute("value",""+count);
+                trainButton[i].setAttribute("onclick","TrainingRequest(\"training"+i+"\")")
+            }
+        }
+        generateIdAndValues();
+    </script>
+
+    <!-- After clicking on the "Training Request" button, ajax is used to retrieve the url and the id of the
+    corresponding button, and a pop-up is displayed to remind the user that the request has been received. -->
+    <script th:inline="javascript">
+
+        function TrainingRequest(id){
+
+            $.ajax({
+                url:"/getTraining",
+                data:{"userName":[[${#httpServletRequest.remoteUser}]],"equipmentID":document.getElementById(id).getAttribute("value")},
+                success: function (data){
+                    alert("your training data:"+data+"please wait for approve.");
+                }
+            })
+            alert("please wait for approve.");
+        }
+
+
+    </script>
+
+    <script th:inline="javascript">
+        let trainedEquipment = [[${trainedEquipment}]];
+        console.log(trainedEquipment);
+
+        for (let i=0; i<trainedEquipment.length; i++) {
+            let card = document.querySelector(`#${trainedEquipment[i]}`);
+            card.classList.remove("unavailable-card");
+            card.classList.add("available-card");
+
+            let bookingForm = card.querySelector("form");
+            bookingForm.removeAttribute("hidden");
+
+            let trainingButton = card.querySelector(".training");
+            trainingButton.setAttribute("hidden", "true");
+        }
+    </script>
+
+    <script>
+        // Hitting the enter key triggers the search button click event.
+        $("#searchbar").keydown(function(e) {
+            if (e.which == 13) {
+                $("button.searchButton").trigger("click");
+            }
+        });
+    </script>
+
+    <script>
+        // Search bar javascript code
+        function search_equipment() {
+            var input, filter, ul, li, a, i, txtValue;
+            input = document.getElementById("searchbar");
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("equipment_lists");
+            li = ul.getElementsByTagName("article");
+
+            for (i = 0; i < li.length; i++) {
+                a = li[i];
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+</body>
+</html>

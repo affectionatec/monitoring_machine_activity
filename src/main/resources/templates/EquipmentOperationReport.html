@@ -1,0 +1,406 @@
+<html>
+
+<head>
+    <!-- bootstrap stylesheet -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+          integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <!-- jquery -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+    <!-- bootstrap - icons  -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+</head>
+
+<body>
+<div class="container" id="printPage">
+    <div class="page-label">Print Check Result</div>
+    <div class="estimate-container">
+
+        <div class="table-container">
+
+        </div>
+    </div>
+    <div class="graph-container">
+        <button class="btn btn-primary btn-graph" onclick="printPage()">Generate PDF</button>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.1.2/dist/echarts.min.js"></script>
+<!-- 测试数据 -->
+<script type="text/javascript" th:src="@{/js/jqprint-0.3.js}"></script>
+<script src="http://www.jq22.com/jquery/jquery-migrate-1.2.1.min.js"></script>
+<script src="./indexData.js"></script>
+<script>
+
+    // format json data
+    let getDateList = (res) => {
+        let dateList = res.dateList;
+        return dateList;
+    }
+    let getDataListPre = (res) => {
+        let dataList = res.dataList;
+        return dataList;
+    }
+    // new -------
+    let transDailyValue = (obj) => {
+
+        let valueObj = obj;
+        let valueArr = [];
+
+        $.each(valueObj, (index, ele) => {
+            if (index != 'date' && index != 'equipmentName') {
+                valueArr.push({
+                    name: index,
+                    value: ele
+                })
+            }
+        })
+        let conditionObj = {
+            date: valueObj['date'],
+            value: valueArr
+        }
+        return conditionObj;
+    }
+
+    let generateDailyArr = (dateList) => {
+        let dailyArr = [];
+        dateList.map((ele, index) => {
+            dailyArr.push({
+                date: ele,
+                value: []
+            })
+        })
+        return dailyArr;
+    }
+    let getStr = (str) => {
+        let str_ = str
+        return str_;
+    }
+    let formatResData = (res) => {
+        let dataListPre = getDataListPre(res);
+        let dateList = getDateList(res);
+        let dataList = [];
+
+        if (dataListPre && dataListPre.length > 0) {
+            dataListPre.map((elePre, indexPre) => {
+                if (indexPre > 0) {
+                    let flag = 0;
+                    dataList.map((ele, index) => {
+                        if (ele.name == elePre['equipmentName']) {
+                            flag = 1;
+                        }
+                    })
+                    if (flag == 0) {
+                        dataList.push({
+                            name: elePre['equipmentName'],
+                            machineConditions: []
+                        })
+                    }
+                } else {
+                    dataList.push({
+                        name: elePre['equipmentName'],
+                        machineConditions: []
+                    })
+                }
+            })
+        }
+
+        dataList.map((ele, index) => {
+            dataList[index].machineConditions = generateDailyArr(dateList);
+        })
+
+        dataList.map((ele, index) => {
+            dataListPre.map((elePre, indexPre) => {
+                if (ele.name == elePre.equipmentName) {
+                    // console.log(dataList[index].machineConditions)
+                    dataList[index].machineConditions.map((conEle, conIndex) => {
+                        if (conEle.date == elePre.date) {
+                            dataList[index].machineConditions[conIndex] = transDailyValue(elePre);
+                        }
+                    })
+                }
+            })
+        })
+        // console.log(dataList)
+        return dataList;
+    }
+
+
+
+    // ----------------------table loading methods----------------------------------
+    // load table head according to the specific date
+    let loadTableHead = (dateList) => {
+        // let list = dataList ? dataList : [];
+        let tableHead = ``;
+        // if (list && list.length > 0) {
+        // let machineConditionList = list[0].machineConditions;
+        // if (machineConditionList && machineConditionList.length > 0) {
+        if (dateList && dateList.length > 0) {
+            dateList.map((ele, index) => {
+                tableHead = tableHead + `<td>${ele}</td>`;
+            })
+            // machineConditionList.map((ele, index) => {
+            //     let date = ele.date;
+            //     tableHead = tableHead + `<td>${date}</td>`;
+            // })
+        } else console.log('error, there is no data on selected period. ');
+
+        // } else console.log('error, there is no status data on selected period. ');
+
+        tableHead = `<thead>
+            <tr>
+            <td>Equipment</td>
+            ${tableHead}
+            </tr>
+            </thead>`
+        return tableHead;
+    }
+
+    /* Condition estimation method
+    *  parameters
+    *  standard = [{
+    *     'value': int/string/[int x, int y],
+    *     'mod': 0, 1, 2 (0: equal, 1: no large than, 2: no small than, 3: in the range x ~ y)
+    *  }]
+    *  data = [int/string]
+    */
+    let estimate = (standard, data) => {
+        console.log(data, standard)
+        let flag = 1;
+        let tipStr = ``;
+        if (data && data.length > 0) {
+            if (standard && (standard.length > 0)) {
+                let tips = [];
+                // new method ---
+                data.map((ele, index) => {
+                    let problem = '';
+
+                    standard.map((eleS, indexS) => {
+                        if (eleS.name == 'engineStartTime') {
+                        }
+                        if (eleS.name == ele.name) {
+                            switch (eleS.mode) {
+                                case '0':
+                                    if (eleS.value == ele.value) {
+                                        tips.push(ele.name + ': pass');
+                                    } else {
+                                        flag = 0;
+                                        tips.push(`${ele.name}: fail, ${ele.value} fail to sufficient ${eleS.value}`);
+                                    }
+                                    break;
+                                case '1':
+                                    if ((parseInt(JSON.parse(eleS.value)[0]) < parseInt(ele.value)) && (parseInt(JSON.parse(eleS.value)[1]) > parseInt(ele.value))) {
+                                        tips.push(ele.name + ': pass');
+                                    } else {
+                                        flag = 0;
+                                        if (parseInt(JSON.parse(eleS.value)[0]) >= parseInt(ele.value)) {
+                                            tips.push(`${ele.name}: fail, ${ele.value} small than ${JSON.parse(eleS.value)[0]}`);
+                                        } else if (parseInt(JSON.parse(eleS.value)[1]) <= parseInt(ele.value)) {
+                                            tips.push(`${ele.name}: fail, ${ele.value} large than ${JSON.parse(eleS.value)[1]}`);
+                                        }
+                                    }
+                                    // if ((JSON.parse(eleS.value)[0] < ele.value) && (JSON.parse(eleS.value)[1] > ele.value)) {
+                                    //     tips.push(ele.name + ': pass');
+                                    // } else {
+                                    //     flag = 0;
+                                    //     if (JSON.parse(eleS.value)[0] >= ele.value) {
+                                    //         tips.push(`${ele.name}: fail, ${ele.value} small than ${eleS.value[0]}`);
+                                    //     } else if (JSON.parse(eleS.value)[1] <= ele.value) {
+                                    //         tips.push(`${ele.name}: fail, ${ele.value} large than ${eleS.value[1]}`);
+                                    //     }
+                                    // }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    })
+                })
+                if (tips.length > 0) {
+                    tips.map((ele, index) => {
+                        tipStr = tipStr + ele + ';</br>';
+                    })
+                }
+            } else console.log('error, please supply the standard for every data norm. ');
+        } else console.log('error, there is no data to estimate. ');
+        let result = {
+            'flag': flag,
+            'tips': tipStr
+        }
+        return result;
+    }
+
+    // load table content
+    let loadTableContent = (dataList, standardList) => {
+        let tableBody = ``;
+        let standard = standardList;
+        let list = dataList ? dataList : [];
+        if (list && list.length > 0) {
+            list.map((ele, index) => {
+                let conditions = ele.machineConditions;
+                if (conditions && conditions.length > 0) {
+                    let tr = `<td>${ele.name}</td>`;
+                    conditions.map((eleDaily, indexDaily) => {
+                        let dailyValue = eleDaily.value;
+                        if (dailyValue && dailyValue.length > 0) {
+                            let result = estimate(standard, dailyValue);
+
+                            tr = tr + `
+                            <td data-html="true">
+                                ${result.tips}
+                            </td>
+                            `;
+
+                        } else {
+                            tr = tr + `
+                            <td class="empty-element" data-toggle="tooltip" title="There is no data today."></td>
+                            `;
+                        }
+                    })
+                    tr = `<tr>${tr}</tr>`;
+                    tableBody = tableBody + tr;
+                }
+            })
+        }
+        tableBody = `<tbody>${tableBody}</tbody>`;
+        return tableBody;
+    };
+
+    // new data format function
+    let getEqList = (dataList) => {
+        let eqList = [];
+        dataList.map(dataEle => {
+            if (eqList.indexOf(dataEle.equipmentName) == -1) {
+                eqList.push(dataEle.equipmentName);
+            }
+        })
+        return eqList;
+    }
+
+    let transDataVertical = (dataList, dateList) => {
+        let eqList = getEqList(dataList);
+        dataList.map(dataEle => {
+            if (eqList.indexOf(dataEle.equipmentName) == -1) {
+                eqList.push(dataEle.equipmentName);
+            }
+        })
+        let fixedDataList = [];
+        dateList.map((dateEle, dateIdx) => {
+            fixedDataList.push({ "name": dateEle, "machineConditions": [] });
+            // console.log(dateIdx, dataEle);
+            eqList.map((eqEle, eqIdx) => {
+                let eqEleData = {
+                    date: eqEle,
+                    value: []
+                }
+                dataList.find((value) => {
+                    if (value.equipmentName == eqEle && value.date == dateEle) {
+                        $.each(value, (key, val) => {
+                            let obj = {};
+                            if (key != "equipmentName" && key != "date") {
+                                obj["name"] = key;
+                                obj["value"] = val;
+                                eqEleData.value.push(obj);
+                            }
+                        });
+                    }
+                })
+                fixedDataList[dateIdx].machineConditions.push(eqEleData);
+            })
+
+        })
+        console.log(fixedDataList)
+        return fixedDataList;
+    }
+
+    let loadTable = (res) => {
+        console.log(res)
+        let tableDocPre = `<table class="condition-table table table-bordered table-striped"></table>`;
+        // init a table.
+        $(".table-container").append(tableDocPre);
+        //load table head.
+        // $(".condition-table").append(loadTableHead(getDateList(res)));
+        $(".condition-table").append(loadTableHead(getEqList(res.dataList)));
+        //load table body.
+        // $(".condition-table").append(loadTableContent(formatResData(res), res.standardList));
+        $(".condition-table").append(loadTableContent(transDataVertical(res.dataList, res.dateList), res.standardList));
+        // load tips.
+        $('[data-toggle="tooltip"]').tooltip();
+
+    }
+    $(() => {
+        checkTableRes = localStorage.getItem('checkTableRes')
+        loadTable(JSON.parse(checkTableRes))
+        $('[data-toggle="tooltip"]').tooltip()
+        console.log(tableStr)
+    })
+</script>
+<script type="text/javascript">
+    let printPage = () => {
+        $('#printPage').jqprint();
+    }
+
+</script>
+</body>
+<style>
+    body {
+        background-color: #e0e0e9;
+    }
+
+    .page-label {
+        background-color: #fff;
+        margin: 0 0 0 2rem;
+        padding: 2rem 0 1rem 2rem;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .estimate-container {
+        background-color: #fff;
+        margin: 1rem 0 0 2rem;
+        padding: 2rem;
+    }
+
+    .table-container .bi-check-circle-fill {
+        color: #28a745;
+    }
+
+    .table-container .bi-x-circle-fill {
+        color: #dc3545;
+    }
+
+    .table-container td {
+        font-size: 0.8rem;
+        padding: 0.2rem;
+    }
+
+    .table-container .empty-element {
+        background-color: #6c757d;
+    }
+
+    .log-table-container {
+        background-color: #fff;
+        margin: 1rem 0 0 2rem;
+        padding: 2rem;
+    }
+
+    .log-table-container>.label-maintainence {
+        margin: 0 0 1rem 0;
+    }
+
+    .tooltip-inner {
+        max-width: 20rem !important;
+        text-align: left !important;
+    }
+
+    .table-container {
+        overflow-x: scroll;
+    }
+
+    .table-container table {
+        width: 80rem;
+    }
+</style>
+
+</html>

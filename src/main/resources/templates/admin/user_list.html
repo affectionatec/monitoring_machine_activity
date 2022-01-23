@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <title>user list</title>
+  <header th:replace="fragments/Header.html"></header>
+
+  <style>
+    .btn-primary {
+      background-color: #005fff;
+      border-color: #005fff;
+    }
+  </style>
+</head>
+<body>
+
+
+<div class="container my-2">
+  <h1>user list</h1>
+
+  <a th:href="@{/superadmin/show_new_user}" class="btn btn-primary btn-sm mb-3"> add user </a>
+
+  <button id="createProject" class="btn btn-primary btn-sm mb-3"> Create Project Code </button>
+  <form id="projectForm" hidden="true">
+    <label for="code">Code:</label>
+    <input name="code" id="code" type="text" maxlength="20">
+
+    <label for="name">Name:</label>
+    <select name="name" id="name">
+      <option value="" selected>-</option>
+      <option th:each="username:${list_users}" th:value="${username.username}" th:text="${username.username}"></option>
+    </select>
+
+
+    <button class="submit btn btn-primary btn-sm mb-3"> Create </button>
+  </form>
+
+  <table border="1" class="table table-striped table-responsive-md">
+    <thead>
+    <tr>
+      <th>user name</th>
+      <th>user role</th>
+      <th>email</th>
+      <th>enabled</th>
+      <th>actions </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${list_users}">
+      <a href=""><td th:text="${user.username}"></td></a>
+      <td th:text="${user.role}"></td>
+      <td th:type="email" th:text="${user.email}"></td>
+      <td th:text="${user.enabled}"></td>
+      <td> <a th:href="@{/superadmin/update_user/{id}(id=${user.id})}" class="btn btn-primary">Update</a>
+        <a th:href="@{/superadmin/delete_user/{id}(id=${user.id})}" class="btn btn-danger">Delete</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+<footer th:replace="fragments/Footer.html"></footer>
+
+
+
+<script>
+  $(document).ready(function () {
+    $("#code").on("keyup", function () {
+      var maxLength = $(this).attr("maxlength");
+      if (maxLength == $(this).val().length) {
+        alert(`Maximum ${maxLength} characters!`)
+      }
+    })
+  });
+
+  let projectButton = document.querySelector("#createProject");
+  let projectForm = document.querySelector("#projectForm");
+  let submitButton = document.querySelector(".submit");
+
+  projectButton.addEventListener("click", function() {
+    if (projectForm.hasAttribute("hidden")) {
+      projectForm.removeAttribute("hidden");
+    } else {
+      projectForm.setAttribute("hidden", "");
+    }
+  });
+
+  submitButton.addEventListener("click", submit);
+
+  function submit() {
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "/superadmin/createProject", true);
+    xhr.setRequestHeader("Content-type", "application/json");
+
+    let code = document.getElementById("code").value;
+    let name = document.getElementById("name").value;
+
+    let projectInfo = {"code": code, "name": name};
+    let projectInfoJSON = JSON.stringify(projectInfo);
+
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 201) {
+          alert("Successfully Created");
+        } else {
+          alert("Oops, something went wrong.");
+        }
+      }
+    }
+
+    xhr.send(projectInfoJSON);
+  }
+</script>
+
+</html>
